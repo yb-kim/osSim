@@ -1,7 +1,12 @@
 #include <monoOS.h>
+#include <string>
+
+using namespace std;
 
 int main(void) {
-    Config cfg;
+    string configFileName = "config/example.json";
+    Config cfg(configFileName);
+
     MonoOS os(&cfg);
     os.run();
     return 0;
