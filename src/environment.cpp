@@ -3,8 +3,8 @@
 
 using namespace std;
 
-Environment::Environment(int _nCores) :
-    nCores(_nCores)
+Environment::Environment(EnvConfig *cfg):
+    nCores(cfg->getNCores())
 {
     cores = new Core[nCores];
 }

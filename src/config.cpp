@@ -17,8 +17,20 @@ Config::Config(string configFile) {
     setParams(cfg);
 }
 
-void Config::setParams(Document &cfg) {
-    maxTick = cfg["maxTick"].GetInt();
-    unitTick = cfg["unitTick"].GetInt();
-    nCores = cfg["nCores"].GetInt();
+
+void Config::setParams(Document& cfg) {
+    osConfig = new OsConfig(cfg["os"]);
+    envConfig = new EnvConfig(cfg["env"]);
+}
+
+
+OsConfig::OsConfig(Value& params) {
+    maxTick = params["maxTick"].GetInt();
+    unitTick = params["unitTick"].GetInt();
+    contextSwitchTick = params["contextSwitchTick"].GetInt();
+}
+
+
+EnvConfig::EnvConfig(Value& params) {
+    nCores = params["nCores"].GetInt();
 }

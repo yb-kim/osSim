@@ -1,5 +1,11 @@
 {
-    "maxTick": 1000,
-    "unitTick": 100,
-    "nCores": 4
+    "os": {
+        "maxTick": 1000,
+        "unitTick": 100,
+        "contextSwitchTick": 50
+    },
+
+    "env": {
+        "nCores": 4
+    }
 }

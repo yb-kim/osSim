@@ -2,7 +2,8 @@ Import('env')
 
 targetName = 'osSim'
 srcs = ['main.cpp', 'os.cpp', 'monoOS.cpp', 'config.cpp',
-        'environment.cpp', 'core.cpp', ]
+        'environment.cpp', 'core.cpp', 'application.cpp',
+        'appQueue.cpp', ]
 
 t = env.Program(target = targetName, source = srcs)
 Default(t)

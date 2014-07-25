@@ -1,8 +1,9 @@
 #include <core.h>
+#include <config.h>
 
 class Environment {
 public:
-    Environment(int nCores);
+    Environment(EnvConfig *cfg);
     void createCores(int n);
     int getNCores() { return nCores; }
     Core* getCores() { return cores; }
