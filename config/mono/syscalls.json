@@ -1,0 +1,16 @@
+{
+    "types": {
+        "t1": {
+            "ticks": {
+                "normal": 100,
+                "lock": 0
+            }
+        },
+        "t2" : {
+            "ticks": {
+                "normal": 0,
+                "lock": 100
+            }
+        }
+    }
+}
