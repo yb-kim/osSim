@@ -1,16 +1,19 @@
 {
-    "types": {
-        "t1": {
+    "types": [
+        {
+            "name": "t1",
             "ticks": {
                 "normal": 100,
                 "lock": 0
             }
         },
-        "t2" : {
+
+        {
+            "name": "t2", 
             "ticks": {
                 "normal": 0,
                 "lock": 100
             }
         }
-    }
+    ]
 }
