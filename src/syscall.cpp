@@ -8,6 +8,7 @@ using namespace std;
 using namespace rapidjson;
 
 SyscallSpec** Syscall::syscalls;
+Application** Syscall::locks;
 
 SyscallSpec* Syscall::getSyscallSpec(unsigned int n) {
     return syscalls[n];
@@ -31,4 +32,20 @@ void Syscall::setSyscalls(string syscallSpecs) {
         unsigned int lockTicks = ticks["lock"].GetInt();
         syscalls[i] = new SyscallSpec(normalTicks, lockTicks);
     }
+
+    //Initialize locks
+    locks = new Application*[nSpecs];
+    for(SizeType i=0; i<nSpecs; i++) locks[i] = NULL;
+}
+
+bool Syscall::getLock(unsigned int syscallNum, Application *app) {
+    if(locks[syscallNum]==NULL || locks[syscallNum]==app) {
+        locks[syscallNum] = app;
+        return true;
+    }
+    return false;
+}
+
+void Syscall::freeLock(unsigned int syscallNum, Application *app) {
+    if(locks[syscallNum]==app) locks[syscallNum] = NULL;
 }
