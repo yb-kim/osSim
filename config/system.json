@@ -1,4 +1,6 @@
 {
+    "osType": "mono",
+
     "os": {
         "maxTick": 1000,
         "unitTick": 100,
@@ -7,5 +9,9 @@
 
     "env": {
         "nCores": 4
+    },
+
+    "appQueue": {
+        "policy": "ROUND_ROBIN"
     }
 }

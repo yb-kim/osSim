@@ -6,7 +6,12 @@
 class OS {
 public:
     OS(Config *cfg);
-    virtual void run() = 0;
+    void run();
+    virtual void init();
+    virtual void executeCore(unsigned int n);
+    virtual void checkAndDoSchedule();
+    virtual void afterExecute();
+    virtual void wrapUp();
 
 protected:
     Environment *env;
@@ -19,4 +24,5 @@ protected:
     unsigned int curTick;
     unsigned int unitTick;
     unsigned int contextSwitchTick;
+    unsigned int untilContextSwitch;
 };

@@ -20,6 +20,11 @@ Config::Config(string configFile) {
 void Config::setParams(Document& cfg) {
     osConfig = new OsConfig(cfg["os"]);
     envConfig = new EnvConfig(cfg["env"]);
+    appQueueConfig = new AppQueueConfig(cfg["appQueue"]);
+
+    osTypeString = cfg["osType"].GetString();
+    if(osTypeString == "mono") osType = MONO;
+    else osType = NONE;
 }
 
 
@@ -32,4 +37,11 @@ OsConfig::OsConfig(Value& params) {
 
 EnvConfig::EnvConfig(Value& params) {
     nCores = params["nCores"].GetInt();
+}
+
+
+AppQueueConfig::AppQueueConfig(Value& params) {
+    string policyString = params["policy"].GetString();
+    if(policyString == "ROUND_ROBIN") schedulePolicy = AppQueue::ROUND_ROBIN;
+    else schedulePolicy = AppQueue::ROUND_ROBIN; //default
 }

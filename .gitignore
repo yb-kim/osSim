@@ -24,4 +24,7 @@
 .sconsign.dblite
 build
 
+#swap files
+*.swp
+
 osSim

@@ -3,7 +3,7 @@
 class AppFactory {
 public:
     AppFactory();
-    Application* createApp();
+    virtual Application* createApp();
 private:
     //
 };

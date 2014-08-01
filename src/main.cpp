@@ -5,14 +5,20 @@
 using namespace std;
 
 int main(void) {
-    string configFileName = "config/example.json";
-    string syscallSpecs = "config/mono/syscalls.json";
-    string appSpecs = "config/mono/apps.json";
+    string configFileName = "config/system.json";
 
     Config cfg(configFileName);
-    Syscall::setSyscalls(syscallSpecs);
 
-    MonoOS os(&cfg);
-    os.run();
+    OS *os;
+    switch(cfg.getOsType()) {
+    case Config::MONO:
+        os = new MonoOS(&cfg);
+        break;
+    defalut:
+        cout << "no type selected" << endl;
+        os = new MonoOS(&cfg);
+    }
+    os->run();
+
     return 0;
 }
