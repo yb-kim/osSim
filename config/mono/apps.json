@@ -1,10 +1,14 @@
 {
-    "types": {
-        "t1": {
-            "syscalls": [0, 0, 1, 1, 0]
+    "types": [
+        {
+            "type": "normal",
+            "syscalls": [0, 0, 0, 0, 0]
         },
-        "t2": {
-            "syscalls": [1, 1, 1, 0, 0]
+        {
+            "type": "normal",
+            "syscalls": [1, 1, 1, 1, 1]
         }
-    }
+    ],
+        
+    "workloads": [0, 1]
 }

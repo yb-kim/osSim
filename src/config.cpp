@@ -42,6 +42,8 @@ EnvConfig::EnvConfig(Value& params) {
 
 AppQueueConfig::AppQueueConfig(Value& params) {
     string policyString = params["policy"].GetString();
-    if(policyString == "ROUND_ROBIN") schedulePolicy = AppQueue::ROUND_ROBIN;
-    else schedulePolicy = AppQueue::ROUND_ROBIN; //default
+    Value& workloads = params["workloads"];
+    nWorkloads = workloads.Size();
+    workloadSequence = new int[nWorkloads];
+    for(SizeType i=0; i<nWorkloads; i++) workloadSequence[i] = workloads[i].GetInt();
 }

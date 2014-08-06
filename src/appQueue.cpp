@@ -1,12 +1,18 @@
 #include <appQueue.h>
+#include <iostream>
 
-AppQueue::AppQueue() {
-    selectApp = &AppQueue::select_roundRobin;
-}
+using namespace std;
 
+AppQueue::AppQueue(AppQueueConfig *config):
+    nWorkloads(config->getNWorkloads()),
+    workloadSequence(config->getWorkloadSequence())
+{
+    string policyString = config->getSchedulePolicyString();
 
-AppQueue::AppQueue(SchedulePolicy policy) {
-    switch(policy) {
+    if(policyString == "ROUND_ROBIN") schedulePolicy = AppQueue::ROUND_ROBIN;
+    else schedulePolicy = AppQueue::ROUND_ROBIN; //default
+
+    switch(schedulePolicy) {
     case ROUND_ROBIN:
         selectApp = &AppQueue::select_roundRobin;
         break;

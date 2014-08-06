@@ -2,7 +2,6 @@
 
 #include <lib/rapidjson/document.h>
 #include <string>
-#include <appQueue.h>
 
 class OsConfig;
 class EnvConfig;
@@ -16,6 +15,7 @@ public:
 
     OsConfig* getOsConfig() { return osConfig; }
     EnvConfig* getEnvConfig() { return envConfig; }
+    AppQueueConfig* getAppQueueConfig() { return appQueueConfig; }
     OSType getOsType() { return osType; }
     std::string getOsTypeString() { return osTypeString; }
 
@@ -60,8 +60,12 @@ private:
 class AppQueueConfig {
 public:
     AppQueueConfig(rapidjson::Value& params);
-    AppQueue::SchedulePolicy getSchedulePolicy() { return schedulePolicy; }
+    std::string getSchedulePolicyString() { return schedulePolicyString; }
+    int getNWorkloads() { return nWorkloads; }
+    int* getWorkloadSequence() { return workloadSequence; }
 
 private:
-    AppQueue::SchedulePolicy schedulePolicy;
+    std::string schedulePolicyString;
+    int nWorkloads;
+    int *workloadSequence;
 };

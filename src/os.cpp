@@ -12,13 +12,14 @@ OS::OS(Config *cfg) :
     curTick(0)
 {
     env = new Environment(cfg->getEnvConfig());
-    readyQueue = new AppQueue();
+    readyQueue = new AppQueue(cfg->getAppQueueConfig());
 
     string osTypeString = cfg->getOsTypeString();
     string syscallSpecs = "config/"+osTypeString+"/syscalls.json";
     string appSpecs = "config/"+osTypeString+"/apps.json";
 
     Syscall::setSyscalls(syscallSpecs);
+    Application::setApplications(appSpecs);
 }
 
 void OS::run() {

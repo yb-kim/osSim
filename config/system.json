@@ -12,6 +12,7 @@
     },
 
     "appQueue": {
-        "policy": "ROUND_ROBIN"
+        "policy": "ROUND_ROBIN",
+        "workloads": [0, 1]
     }
 }
