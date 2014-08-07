@@ -32,6 +32,7 @@ OsConfig::OsConfig(Value& params) {
     maxTick = params["maxTick"].GetInt();
     unitTick = params["unitTick"].GetInt();
     contextSwitchTick = params["contextSwitchTick"].GetInt();
+    nApps = params["nApps"].GetInt();
 }
 
 

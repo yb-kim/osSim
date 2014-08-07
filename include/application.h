@@ -1,33 +1,39 @@
 #pragma once
 
 #include <syscall.h>
-
-class ApplicationSpec;
+#include <applicationSpec.h>
 
 class Application {
 public:
     Application();
+    Application(unsigned int appSpecIndex);
+
     static void setApplications(std::string appSpecs);
+    static unsigned int getNSpecs() { return nSpecs; }
+    static ApplicationSpec* getAppSpec(unsigned int index) { return appSpecs[index]; }
+
+    bool isFinished() { return finished; }
+
+    virtual void run(unsigned int unitTick);
+
 private:
+    //static variables
     static ApplicationSpec **appSpecs;
-    //
-};
-
-
-class ApplicationSpec {
-public:
-    enum ApplicationType { 
-        NORMAL 
-    };
-
-    ApplicationSpec(ApplicationType _type, int *_syscallIndex):
-        type(_type),
-        syscallIndex(_syscallIndex)
-    {
-        //
-    }
-    
-private:
-    ApplicationType type;
-    int *syscallIndex;
+    static unsigned int nSpecs;
+    //private functions
+    void setPC(unsigned int syscallIndex);
+    unsigned int processNormalTicks(unsigned int tick); //returns ticks remaining
+    unsigned int processLockTicks(unsigned int tick);
+    bool moveToNextSyscall(); // returns false when there is no syscall remaining
+    bool isSyscallFinished();
+    //bool isFinished() { return (syscallPointer == spec->getNSyscalls()) && untilSyscallFinish == 0; }
+    //private variables
+    unsigned int specIndex;
+    ApplicationSpec *spec;
+    struct PC {
+        unsigned int normalTicks;
+        unsigned int lockTicks;
+    } pc;
+    unsigned int syscallPointer;
+    bool finished;
 };

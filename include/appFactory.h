@@ -4,6 +4,9 @@ class AppFactory {
 public:
     AppFactory();
     virtual Application* createApp();
-private:
     //
+private:
+    unsigned int selectAppType();
+
+    unsigned int appTypePointer;
 };

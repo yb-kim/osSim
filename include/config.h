@@ -36,6 +36,7 @@ public:
     unsigned int getUnitTick() { return unitTick; }
     unsigned int getNCores() { return nCores; }
     unsigned int getContextSwitchTick() { return contextSwitchTick; }
+    unsigned int getNApps() { return nApps; }
 
 
 private:
@@ -43,6 +44,7 @@ private:
     unsigned int unitTick;
     unsigned int nCores;
     unsigned int contextSwitchTick;
+    unsigned int nApps;
 };
 
 

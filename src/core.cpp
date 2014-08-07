@@ -1,5 +1,11 @@
 #include <core.h>
 
-Core::Core() {
+Core::Core():
+    appRunning(NULL)
+{
     //
+}
+
+void Core::loadApp(Application *app) {
+    appRunning = app;
 }

@@ -8,20 +8,31 @@ AppQueue::AppQueue(AppQueueConfig *config):
     workloadSequence(config->getWorkloadSequence())
 {
     string policyString = config->getSchedulePolicyString();
+    setPolicy(policyString);
+}
 
-    if(policyString == "ROUND_ROBIN") schedulePolicy = AppQueue::ROUND_ROBIN;
-    else schedulePolicy = AppQueue::ROUND_ROBIN; //default
 
-    switch(schedulePolicy) {
-    case ROUND_ROBIN:
-        selectApp = &AppQueue::select_roundRobin;
-        break;
-    defalut:
+void AppQueue::setPolicy(string policyString) {
+    if(NULL) {
+        //process another scheduling
+    }
+    else if(policyString=="ROUND_ROBIN" || true) { //ROUND_ROBIN or default
+        schedulePolicy = AppQueue::ROUND_ROBIN;
+        storage = new AppQueue::StorageType<Application *>::roundRobin();
         selectApp = &AppQueue::select_roundRobin;
     }
 }
 
-
 Application* AppQueue::select_roundRobin() {
-    return new Application();
+    AppQueue::StorageType<Application *>::roundRobin *queue;
+    queue = (AppQueue::StorageType<Application *>::roundRobin *)storage;
+    Application *popped = queue->front(); 
+    queue->pop();
+    return popped;
+}
+
+void AppQueue::enque(Application *app) {
+    AppQueue::StorageType<Application *>::roundRobin *queue;
+    queue = (AppQueue::StorageType<Application *>::roundRobin *)storage;
+    queue->push(app);
 }
