@@ -5,7 +5,7 @@
 using namespace std;
 
 int main(void) {
-    string configFileName = "config/system.json";
+    string configFileName = "config/example/system.json";
 
     Config cfg(configFileName);
 

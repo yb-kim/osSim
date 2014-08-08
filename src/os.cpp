@@ -18,8 +18,8 @@ OS::OS(Config *cfg) :
     factory = new AppFactory();
 
     string osTypeString = cfg->getOsTypeString();
-    string syscallSpecs = "config/"+osTypeString+"/syscalls.json";
-    string appSpecs = "config/"+osTypeString+"/apps.json";
+    string syscallSpecs = "config/example/"+osTypeString+"/syscalls.json";
+    string appSpecs = "config/example/"+osTypeString+"/apps.json";
 
     Syscall::setSyscalls(syscallSpecs);
     Application::setApplications(appSpecs);
