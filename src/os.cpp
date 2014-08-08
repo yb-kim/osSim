@@ -17,9 +17,10 @@ OS::OS(Config *cfg) :
     readyQueue = new AppQueue(cfg->getAppQueueConfig());
     factory = new AppFactory();
 
+    string configFileRoot = cfg->getConfigFileRoot();
     string osTypeString = cfg->getOsTypeString();
-    string syscallSpecs = "config/example/"+osTypeString+"/syscalls.json";
-    string appSpecs = "config/example/"+osTypeString+"/apps.json";
+    string syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
+    string appSpecs = configFileRoot+osTypeString+"/apps.json";
 
     Syscall::setSyscalls(syscallSpecs);
     Application::setApplications(appSpecs);

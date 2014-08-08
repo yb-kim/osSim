@@ -5,8 +5,11 @@
 using namespace std;
 using namespace rapidjson;
 
-Config::Config(string configFile) {
+Config::Config(string configFileRoot):
+    configFileRoot(configFileRoot)
+{
     //read config file and set params
+    string configFile = configFileRoot + "/system.json";
     ifstream inFile(configFile.c_str());
     std::stringstream buffer;
     buffer << inFile.rdbuf();

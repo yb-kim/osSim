@@ -13,6 +13,7 @@ public:
 
     enum OSType { NONE, MONO };
 
+    std::string getConfigFileRoot() { return configFileRoot; }
     OsConfig* getOsConfig() { return osConfig; }
     EnvConfig* getEnvConfig() { return envConfig; }
     AppQueueConfig* getAppQueueConfig() { return appQueueConfig; }
@@ -20,6 +21,7 @@ public:
     std::string getOsTypeString() { return osTypeString; }
 
 private:
+    std::string configFileRoot;
     OsConfig *osConfig;
     EnvConfig *envConfig;
     AppQueueConfig *appQueueConfig;

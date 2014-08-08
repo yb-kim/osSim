@@ -4,10 +4,17 @@
 
 using namespace std;
 
-int main(void) {
-    string configFileName = "config/example/system.json";
+int main(int argc, char* argv[]) {
+    if(argc != 2) {
+        cout << "usage: osSim <config file root directory>" << endl;
+        exit(0);
+    }
 
-    Config cfg(configFileName);
+    string configFileRoot(argv[1]);
+    if(configFileRoot[configFileRoot.size()-1] != '/') configFileRoot += '/';
+    //string configFileName = "config/example/system.json";
+
+    Config cfg(configFileRoot);
 
     OS *os;
     switch(cfg.getOsType()) {
