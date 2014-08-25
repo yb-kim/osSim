@@ -2,7 +2,7 @@
     "osType": "mono",
 
     "os": {
-        "maxTick": 10000,
+        "maxTick": 1000000,
         "unitTick": 30,
         "contextSwitchTick": 50,
         "nApps": 10

@@ -2,6 +2,7 @@
 #include <environment.h>
 #include <appFactory.h>
 #include <appQueue.h>
+#include <string>
 
 class OS {
 public:
@@ -26,6 +27,8 @@ protected:
     unsigned int contextSwitchTick;
     int untilContextSwitch;
     unsigned int nApps;
+    std::string configFileRoot;
+    std::string osTypeString;
 
     //statistics
     unsigned int nAppsFinished;

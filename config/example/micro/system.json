@@ -1,0 +1,20 @@
+{
+    "services": [
+        {
+            "name": "NS",
+            "ticks": 10
+        }, 
+
+        {
+            "name": "PM",
+            "ticks": 10
+        },
+
+        {
+            "name": "FM",
+            "ticks": 10
+        }
+    ],
+
+    "nSet": 1
+}
