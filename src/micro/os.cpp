@@ -1,4 +1,4 @@
-#include <microOS.h>
+#include <micro/os.h>
 
 MicroOS::MicroOS(Config *cfg) : OS(cfg) {
     //

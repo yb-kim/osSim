@@ -1,0 +1,3 @@
+dirSources = ['os.cpp',]
+
+Export('dirSources')

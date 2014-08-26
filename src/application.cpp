@@ -1,8 +1,8 @@
 #include <application.h>
+#include <iostream>
 #include <lib/rapidjson/document.h>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <string>
 
 using namespace std;
@@ -10,10 +10,6 @@ using namespace rapidjson;
 
 ApplicationSpec** Application::appSpecs;
 unsigned int Application::nSpecs;
-
-Application::Application() {
-    //
-}
 
 Application::Application(unsigned int appSpecIndex):
     syscallPointer(0),
@@ -24,42 +20,13 @@ Application::Application(unsigned int appSpecIndex):
     setPC(syscallPointer);
 }
 
-void Application::run(unsigned int unitTick) {
-    if(isFinished()) return;
-    unsigned int remaining;
-    remaining = processNormalTicks(unitTick);
-    remaining = processLockTicks(remaining);
-    if(remaining >= 0 && isSyscallFinished()) {
-        bool next = moveToNextSyscall();
-        if(!next) finished = true;
-        else run(remaining);
-    }
-}
-
 void Application::setPC(unsigned int syscallIndex) {
     SyscallSpec *syscall = Syscall::getSyscallSpec(spec->getSyscallIndex()[syscallIndex]);
     pc.normalTicks = syscall->getNormalTicks();
     pc.lockTicks = syscall->getLockTicks();
 }
 
-unsigned int Application::processNormalTicks(unsigned int tick) {
-    unsigned int processed = (tick < pc.normalTicks) ? tick : pc.normalTicks;
-    pc.normalTicks -= processed;
-    cout << processed << " normal ticks processed" << endl;
-    return (tick-processed);
-}
 
-unsigned int Application::processLockTicks(unsigned int tick) {
-    if(!Syscall::getLock(specIndex, this)) {
-        cout << "cannot gain lock" << endl;
-        return 0;
-    }
-    unsigned int processed = (tick < pc.lockTicks) ? tick : pc.lockTicks;
-    pc.lockTicks -= processed;
-    cout << processed << " lock ticks processed" << endl;
-    if(pc.lockTicks == 0) Syscall::freeLock(specIndex, this);
-    return (tick-processed);
-}
 
 bool Application::moveToNextSyscall() {
     if(syscallPointer == spec->getNSyscalls()-1) return false;

@@ -1,10 +1,21 @@
+import os
 Import('env')
 
 targetName = 'osSim'
-srcs = ['main.cpp', 'os.cpp', 'monoOS.cpp', 'config.cpp',
+srcs = ['main.cpp', 'os.cpp', 'config.cpp',
         'environment.cpp', 'core.cpp', 'application.cpp',
-        'appQueue.cpp', 'syscall.cpp', 'appFactory.cpp', 
-        'microOS.cpp', ]
+        'appQueue.cpp', 'syscall.cpp', 'appFactory.cpp', ]
+
+here = Dir('.').srcnode().abspath
+for root, dirs, files in os.walk(here):
+    if root == here:
+        continue
+    if 'SConscript' in files:
+        SConscript(os.path.join(root, 'SConscript'), duplicate=0)
+        Import('dirSources')
+        path = os.path.basename(os.path.abspath(root))
+        dirSources = map(lambda x: path+'/'+x, dirSources)
+        srcs += dirSources
 
 t = env.Program(target = targetName, source = srcs)
 Default(t)

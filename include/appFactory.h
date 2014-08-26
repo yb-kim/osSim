@@ -1,11 +1,12 @@
+#pragma once
 #include <application.h>
 
 class AppFactory {
 public:
     AppFactory();
-    virtual Application* createApp();
+    virtual Application* createApp() = 0;
     //
-private:
+protected:
     unsigned int selectAppType();
 
     unsigned int appTypePointer;

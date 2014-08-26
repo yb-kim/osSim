@@ -5,7 +5,6 @@
 
 class Application {
 public:
-    Application();
     Application(unsigned int appSpecIndex);
 
     static void setApplications(std::string appSpecs);
@@ -14,16 +13,14 @@ public:
 
     bool isFinished() { return finished; }
 
-    virtual void run(unsigned int unitTick);
+    virtual void run(unsigned int unitTick) = 0;
 
-private:
+protected:
     //static variables
     static ApplicationSpec **appSpecs;
     static unsigned int nSpecs;
     //private functions
     void setPC(unsigned int syscallIndex);
-    unsigned int processNormalTicks(unsigned int tick); //returns ticks remaining
-    unsigned int processLockTicks(unsigned int tick);
     bool moveToNextSyscall(); // returns false when there is no syscall remaining
     bool isSyscallFinished();
     //bool isFinished() { return (syscallPointer == spec->getNSyscalls()) && untilSyscallFinish == 0; }

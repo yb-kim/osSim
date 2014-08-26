@@ -15,7 +15,7 @@ OS::OS(Config *cfg) :
 {
     env = new Environment(cfg->getEnvConfig());
     readyQueue = new AppQueue(cfg->getAppQueueConfig());
-    factory = new AppFactory();
+    //factory = new AppFactory();
 
     configFileRoot = cfg->getConfigFileRoot();
     osTypeString = cfg->getOsTypeString();
@@ -50,30 +50,6 @@ void OS::executeCore(unsigned int n, unsigned int unitTick) {
     core->run(unitTick);
 }
 
-void OS::checkAndDoSchedule() {
-    if(untilContextSwitch <= 0) {
-        cout << "context switching..." << endl;
-        untilContextSwitch = contextSwitchTick;
-        //context switch
-        for(unsigned int i=0; i<env->getNCores(); i++) {
-            Core* core = env->getCore(i);
-            Application *app = core->getAppRunning();
-            if(app->isFinished()) {
-                nAppsFinished++;
-                delete app;
-                readyQueue->enque(factory->createApp());
-            } else {
-                readyQueue->enque(app);
-            }
-            core->loadApp(readyQueue->deque());
-        }
-    }
-}
-
-void OS::afterExecute() {
-    untilContextSwitch -= unitTick;
-    cout << endl;
-}
 
 void OS::wrapUp() {
     cout << "total apps processed: " << nAppsFinished << endl;

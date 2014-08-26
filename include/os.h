@@ -10,8 +10,8 @@ public:
     void run();
     virtual void init();
     virtual void executeCore(unsigned int n, unsigned int unitTick);
-    virtual void checkAndDoSchedule();
-    virtual void afterExecute();
+    virtual void checkAndDoSchedule() = 0;
+    virtual void afterExecute() = 0;
     virtual void wrapUp();
 
 protected:
