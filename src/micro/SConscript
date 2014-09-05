@@ -1,3 +1,4 @@
-dirSources = ['os.cpp',]
+dirSources = ['os.cpp', 'appFactory.cpp',
+              'application.cpp', ]
 
 Export('dirSources')

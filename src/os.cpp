@@ -19,6 +19,10 @@ OS::OS(Config *cfg) :
 
     configFileRoot = cfg->getConfigFileRoot();
     osTypeString = cfg->getOsTypeString();
+
+    syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
+    appSpecs = configFileRoot+osTypeString+"/apps.json";
+
 }
 
 void OS::run() {

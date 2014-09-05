@@ -8,8 +8,6 @@ using namespace std;
 MonoOS::MonoOS(Config *cfg) : OS(cfg) {
     factory = new MonoAppFactory();
 
-    string syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
-    string appSpecs = configFileRoot+osTypeString+"/apps.json";
     Syscall::setSyscalls(syscallSpecs);
     MonoApplication::setApplications(appSpecs);
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <config.h>
 #include <environment.h>
 #include <appFactory.h>
@@ -29,6 +31,8 @@ protected:
     unsigned int nApps;
     std::string configFileRoot;
     std::string osTypeString;
+    std::string syscallSpecs;
+    std::string appSpecs;
 
     //statistics
     unsigned int nAppsFinished;

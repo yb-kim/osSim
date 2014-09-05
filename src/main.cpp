@@ -1,5 +1,6 @@
 #include <iostream>
 #include <mono/os.h>
+#include <micro/os.h>
 #include <string>
 
 using namespace std;
@@ -20,6 +21,9 @@ int main(int argc, char* argv[]) {
     switch(cfg.getOsType()) {
     case Config::MONO:
         os = new MonoOS(&cfg);
+        break;
+    case Config::MICRO:
+        os = new MicroOS(&cfg);
         break;
     defalut:
         cout << "no type selected" << endl;
