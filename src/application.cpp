@@ -26,8 +26,6 @@ void Application::setPC(unsigned int syscallIndex) {
     pc.lockTicks = syscall->getLockTicks();
 }
 
-
-
 bool Application::moveToNextSyscall() {
     if(syscallPointer == spec->getNSyscalls()-1) return false;
     syscallPointer++;

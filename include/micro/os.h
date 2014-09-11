@@ -6,6 +6,11 @@ public:
     void init();
     void checkAndDoSchedule();
     void afterExecute();
+    enum Services {
+        NS, //name service
+        FM,
+        PM
+    };
 private:
     //
 };

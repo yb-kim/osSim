@@ -1,4 +1,5 @@
 #include <application.h>
+#include <micro/os.h>
 
 class MicroApplication : public Application {
 public:
@@ -7,7 +8,5 @@ public:
     void freeLock();
 
 private:
-    unsigned int processNormalTicks(unsigned int tick); //returns ticks remaining
-    unsigned int processLockTicks(unsigned int tick);
-    //
+    void ipc(MicroOS::Services service);
 };

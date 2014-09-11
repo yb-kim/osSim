@@ -27,6 +27,7 @@ void Config::setParams(Document& cfg) {
 
     osTypeString = cfg["osType"].GetString();
     if(osTypeString == "mono") osType = MONO;
+    else if(osTypeString == "micro") osType = MICRO;
     else osType = NONE;
 }
 

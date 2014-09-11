@@ -8,4 +8,6 @@ void MicroApplication::run(unsigned int unitTick) {
     //
 }
 
-
+void MicroApplication::ipc(MicroOS::Services service) {
+    //
+}

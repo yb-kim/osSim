@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     case Config::MICRO:
         os = new MicroOS(&cfg);
         break;
-    defalut:
+    default:
         cout << "no type selected" << endl;
         os = new MonoOS(&cfg);
     }

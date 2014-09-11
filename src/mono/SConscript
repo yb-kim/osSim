@@ -1,4 +1,4 @@
 dirSources = ['os.cpp', 'appFactory.cpp', 
-              'application.cpp', ]
+              'application.cpp', 'syscall.cpp',]
 
 Export('dirSources')

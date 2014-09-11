@@ -8,6 +8,8 @@ using namespace std;
 MonoOS::MonoOS(Config *cfg) : OS(cfg) {
     factory = new MonoAppFactory();
 
+    //TODO: make setSyscalls and setApplications to
+    //MonoOS specific
     Syscall::setSyscalls(syscallSpecs);
     MonoApplication::setApplications(appSpecs);
 }
@@ -41,3 +43,4 @@ void MonoOS::afterExecute() {
     untilContextSwitch -= unitTick;
     cout << endl;
 }
+
