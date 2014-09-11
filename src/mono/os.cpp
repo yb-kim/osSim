@@ -10,7 +10,7 @@ MonoOS::MonoOS(Config *cfg) : OS(cfg) {
 
     //TODO: make setSyscalls and setApplications to
     //MonoOS specific
-    Syscall::setSyscalls(syscallSpecs);
+    Syscall::setMonoSyscalls(syscallSpecs);
     MonoApplication::setApplications(appSpecs);
 }
 

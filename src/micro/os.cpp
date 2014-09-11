@@ -5,8 +5,8 @@
 using namespace std;
 
 MicroOS::MicroOS(Config *cfg) : OS(cfg) {
-    cout << "MicroOS created" << endl;
     factory = new MicroAppFactory();
+    Syscall::setMicroSyscalls(syscallSpecs);
 }
 
 void MicroOS::init() {

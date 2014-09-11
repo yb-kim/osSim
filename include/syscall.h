@@ -2,21 +2,27 @@
 
 #include <string>
 #include <application.h>
+#include <lib/rapidjson/document.h>
 
 class SyscallSpec;
 class Application;
 
 class Syscall {
 public:
-    static void setSyscalls(std::string syscallSpecs);
+    //static void setSyscalls(std::string syscallSpecs);
     static SyscallSpec* getSyscallSpec(unsigned int n); 
     static bool getLock(unsigned int syscallNum, Application *app);
     static void freeLock(unsigned int syscallNum, Application *app);
 
+    static void setMonoSyscalls(std::string syscallSpecs);
+    static void setMicroSyscalls(std::string syscallSpecs);
+
 private:
     Syscall() { }
+    static void readConfig(std::string syscallSpecs);
     static SyscallSpec **syscalls;
     static Application **locks;
+    static rapidjson::Document* specConfig;
 };
 
 
