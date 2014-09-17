@@ -1,5 +1,7 @@
 #include <micro/application.h>
 
+using namespace std;
+
 MicroApplication::MicroApplication(unsigned int appSpecIndex) : Application(appSpecIndex) {
     //
 }

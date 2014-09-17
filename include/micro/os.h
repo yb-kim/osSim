@@ -1,3 +1,5 @@
+#pragma once
+
 #include <os.h>
 
 class MicroOS : public OS {
@@ -11,6 +13,13 @@ public:
         FM,
         PM
     };
+    static Services getService(std::string serviceString) {
+        if(serviceString == "NS") return NS;
+        else if(serviceString == "FM") return FM;
+        else if(serviceString == "PM") return PM;
+        else //default
+            return NS;
+    }
 private:
     //
 };

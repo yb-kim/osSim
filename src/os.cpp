@@ -21,7 +21,10 @@ OS::OS(Config *cfg) :
     osTypeString = cfg->getOsTypeString();
 
     syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
-    appSpecs = configFileRoot+osTypeString+"/apps.json";
+    //appSpecs = configFileRoot+osTypeString+"/apps.json";
+    appSpecs = configFileRoot+"/apps.json";
+
+    Application::setApplications(appSpecs);
 
 }
 

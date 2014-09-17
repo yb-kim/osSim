@@ -11,6 +11,7 @@ public:
 
     static unsigned int getNSpecs() { return nSpecs; }
     static ApplicationSpec* getAppSpec(unsigned int index) { return appSpecs[index]; }
+    static void setApplications(std::string appSpecs);
 
     bool isFinished() { return finished; }
 

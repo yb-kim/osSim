@@ -5,7 +5,6 @@ class MonoApplication : public Application {
 public:
     MonoApplication(unsigned int appSpecIndex);
 
-    static void setApplications(std::string appSpecs);
     void run(unsigned int unitTick);
     void freeLock();
 

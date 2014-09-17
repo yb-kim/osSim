@@ -7,9 +7,7 @@ using namespace std;
 
 MonoOS::MonoOS(Config *cfg) : OS(cfg) {
     factory = new MonoAppFactory();
-
     Syscall::setMonoSyscalls(syscallSpecs);
-    MonoApplication::setApplications(appSpecs);
 }
 
 void MonoOS::init() {

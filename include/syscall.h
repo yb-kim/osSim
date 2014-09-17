@@ -38,7 +38,7 @@ public:
     unsigned int getNormalTicks() { return normalTicks; }
     unsigned int getLockTicks() { return lockTicks; }
 
-private:
+protected:
     unsigned int normalTicks;
     unsigned int lockTicks;
 };

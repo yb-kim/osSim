@@ -1,4 +1,6 @@
 #include <mono/syscall.h>
+#include <micro/syscall.h>
+#include <micro/os.h>
 #include <lib/rapidjson/document.h>
 #include <fstream>
 #include <sstream>
@@ -37,7 +39,7 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
         Value& ticks = (*specConfig)["types"][i]["ticks"];
         unsigned int normalTicks = ticks["normal"].GetInt();
         unsigned int lockTicks = ticks["lock"].GetInt();
-        syscalls[i] = new SyscallSpec(normalTicks, lockTicks);
+        syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks);
     }
 
     //Initialize locks
@@ -47,6 +49,20 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
 
 void Syscall::setMicroSyscalls(string syscallSpecs) {
     readConfig(syscallSpecs);
+
+    SizeType nSpecs = (*specConfig)["types"].Size();
+    syscalls = (SyscallSpec **)new MicroSyscallSpec*[nSpecs];
+    for(SizeType i=0; i<nSpecs; i++) {
+        Value& syscallConfig = (*specConfig)["types"][i];
+        unsigned int normalTicks = syscallConfig["normalTicks"].GetInt();
+        SizeType nServices = syscallConfig["services"].Size();
+        MicroOS::Services *services = new MicroOS::Services[nServices];
+        for(SizeType j=0; j<nServices; j++) {
+            string serviceType = syscallConfig["services"][j].GetString();
+            services[j] = MicroOS::getService(serviceType);
+        }
+        syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices);
+    }
 }
 
 bool Syscall::getLock(unsigned int syscallNum, Application *app) {
