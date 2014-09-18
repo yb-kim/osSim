@@ -6,6 +6,12 @@ Core::Core():
     //
 }
 
+Core::Core(unsigned int index):
+    index(index)
+{
+    //
+}
+
 void Core::loadApp(Application *app) {
     appRunning = app;
 }

@@ -7,5 +7,5 @@ Environment::Environment(EnvConfig *cfg):
     nCores(cfg->getNCores())
 {
     cores = new Core*[nCores];
-    for(int i=0; i<nCores; i++) cores[i] = new Core();
+    for(int i=0; i<nCores; i++) cores[i] = new Core(i);
 }

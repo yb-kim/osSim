@@ -34,7 +34,7 @@ void OS::run() {
         cout << "<<Tick: " << curTick << ">>" << endl;
         checkAndDoSchedule();
         for(int i=0; i<env->getNCores(); i++) {
-            cout << "execute core " << i << "..." << endl;
+            cout << "execute core " << env->getCore(i)->getIndex() << "..." << endl;
             executeCore(i, unitTick);
         }
         curTick += unitTick;

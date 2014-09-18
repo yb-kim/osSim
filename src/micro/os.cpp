@@ -7,7 +7,6 @@ using namespace std;
 MicroOS::MicroOS(Config *cfg) : OS(cfg) {
     factory = new MicroAppFactory();
     Syscall::setMicroSyscalls(syscallSpecs);
-    //TODO: call setApplications
 }
 
 void MicroOS::init() {
