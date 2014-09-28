@@ -7,10 +7,10 @@
 
 class Application {
 public:
-    Application(unsigned int appSpecIndex);
+    Application(int appSpecIndex);
 
     static unsigned int getNSpecs() { return nSpecs; }
-    static ApplicationSpec* getAppSpec(unsigned int index) { return appSpecs[index]; }
+    static ApplicationSpec* getAppSpec(int index) { return (index > 0 ? appSpecs[index] : 0); }
     static void setApplications(std::string appSpecs);
 
     bool isFinished() { return finished; }
@@ -30,7 +30,7 @@ protected:
 
     //private variables
     static rapidjson::Document* specConfig;
-    unsigned int specIndex;
+    int specIndex;
     ApplicationSpec *spec;
     struct PC {
         unsigned int normalTicks;

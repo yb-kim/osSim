@@ -12,13 +12,13 @@ ApplicationSpec** Application::appSpecs;
 unsigned int Application::nSpecs;
 Document* Application::specConfig;
 
-Application::Application(unsigned int appSpecIndex):
+Application::Application(int appSpecIndex):
     syscallPointer(0),
     finished(false)
 {
     specIndex = appSpecIndex;
     spec = Application::getAppSpec(specIndex);
-    setPC(syscallPointer);
+    //setPC(syscallPointer);
 }
 
 void Application::setPC(unsigned int syscallIndex) {

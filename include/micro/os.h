@@ -11,7 +11,8 @@ public:
     enum Services {
         NS, //name service
         FM,
-        PM
+        PM,
+        SERVICES_END //mark end of enumeration
     };
     static Services getService(std::string serviceString) {
         if(serviceString == "NS") return NS;

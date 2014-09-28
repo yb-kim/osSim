@@ -12,7 +12,7 @@ using namespace std;
 
 class MicroApplication : public Application {
 public:
-    MicroApplication(unsigned int appSpecIndex);
+    MicroApplication(int appSpecIndex);
     virtual void run(unsigned int unitTick);
     void freeLock();
 
@@ -24,6 +24,7 @@ private:
 class MicroServiceApplication : public MicroApplication {
 public:
     MicroServiceApplication();
+    MicroServiceApplication(MicroOS::Services service);
     virtual void run(unsigned int unitTick);
 
 private:

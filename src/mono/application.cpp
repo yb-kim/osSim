@@ -9,7 +9,7 @@ using namespace rapidjson;
 using namespace std;
 
 MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpecIndex) {
-    //
+    setPC(syscallPointer);
 }
 
 void MonoApplication::run(unsigned int unitTick) {
