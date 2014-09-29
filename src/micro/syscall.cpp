@@ -2,7 +2,7 @@
 
 MicroSyscallSpec::MicroSyscallSpec(
         unsigned int _normalTicks,
-        MicroOS::Services *services,
+        MicroOS::ServiceType *services,
         unsigned int nServices):
     SyscallSpec(),
     services(services),

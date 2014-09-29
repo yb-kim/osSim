@@ -33,6 +33,7 @@ protected:
     std::string osTypeString;
     std::string syscallSpecs;
     std::string appSpecs;
+    std::string osSpecificSpecs;
 
     //statistics
     unsigned int nAppsFinished;

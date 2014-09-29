@@ -21,6 +21,7 @@ OS::OS(Config *cfg) :
     osTypeString = cfg->getOsTypeString();
 
     syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
+    osSpecificSpecs = configFileRoot+osTypeString+"/system.json";
     //appSpecs = configFileRoot+osTypeString+"/apps.json";
     appSpecs = configFileRoot+"/apps.json";
 

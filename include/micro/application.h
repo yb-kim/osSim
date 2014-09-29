@@ -17,18 +17,18 @@ public:
     void freeLock();
 
 private:
-    void ipc(MicroOS::Services service);
+    void ipc(MicroOS::ServiceType serviceType);
 };
 
 
 class MicroServiceApplication : public MicroApplication {
 public:
     MicroServiceApplication();
-    MicroServiceApplication(MicroOS::Services service);
+    MicroServiceApplication(MicroOS::ServiceType service);
     virtual void run(unsigned int unitTick);
 
 private:
-    MicroOS::Services service;
+    MicroOS::Service* service;
     queue<Request, list<Request> > requestQueue;
 
 };

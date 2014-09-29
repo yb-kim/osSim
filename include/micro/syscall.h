@@ -6,10 +6,10 @@
 class MicroSyscallSpec : public SyscallSpec {
 public:
     MicroSyscallSpec(unsigned int _normalTicks,
-            MicroOS::Services *services,
+            MicroOS::ServiceType *services,
             unsigned int nServices);
     //
 private:
     unsigned int nServices;
-    MicroOS::Services *services;
+    MicroOS::ServiceType *services;
 };

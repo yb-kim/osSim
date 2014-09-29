@@ -8,19 +8,33 @@ public:
     void init();
     void checkAndDoSchedule();
     void afterExecute();
-    enum Services {
+    enum ServiceType {
         NS, //name service
         FM,
         PM,
         SERVICES_END //mark end of enumeration
     };
-    static Services getService(std::string serviceString) {
+
+    class Service {
+    public:
+        Service(ServiceType type, int ticks):type(type), ticks(ticks) { };
+        ServiceType type;
+        int ticks;
+    };
+
+    static Service **services;
+    static int nServices;
+    static int nSet;
+
+    static ServiceType getServiceType(std::string serviceString) {
         if(serviceString == "NS") return NS;
         else if(serviceString == "FM") return FM;
         else if(serviceString == "PM") return PM;
         else //default
             return NS;
     }
+
+    static Service* getService(ServiceType serviceType);
 private:
-    //
+    void setOsSpecificSpecs(std::string osSpecificSpecs);
 };
