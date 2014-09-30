@@ -6,5 +6,7 @@ MicroAppFactory::MicroAppFactory() : AppFactory() {
 }
 
 Application* MicroAppFactory::createApp() {
-    return new MicroApplication(selectAppType());
+    MicroApplication *app = new MicroApplication(selectAppType());
+    app->setOS(os);
+    return app;
 }

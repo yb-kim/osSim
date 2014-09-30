@@ -7,7 +7,11 @@ class MicroApplication;
 class Request {
 public:
     Request() { };
+    Request(MicroApplication *src, MicroApplication *dest):
+        src(src), dest(dest)
+    {
+        //
+    }
 
-private:
     MicroApplication *src, *dest;
 };

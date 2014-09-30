@@ -10,12 +10,15 @@ public:
     Application(int appSpecIndex);
 
     static unsigned int getNSpecs() { return nSpecs; }
-    static ApplicationSpec* getAppSpec(int index) { return (index > 0 ? appSpecs[index] : 0); }
+    static ApplicationSpec* getAppSpec(int index) { return (index >= 0 ? appSpecs[index] : 0); }
     static void setApplications(std::string appSpecs);
 
     bool isFinished() { return finished; }
 
     virtual void run(unsigned int unitTick) = 0;
+    
+    void setCoreIndex(unsigned int index) { coreIndex = index; }
+    unsigned int getCoreIndex() { return coreIndex; }
 
 protected:
     //static variables
@@ -23,7 +26,7 @@ protected:
     static unsigned int nSpecs;
 
     //private functions
-    void setPC(unsigned int syscallIndex);
+    virtual void setPC(unsigned int syscallIndex);
     bool moveToNextSyscall(); // returns false when there is no syscall remaining
     bool isSyscallFinished();
     static void readConfig(std::string appSpecConfig);
@@ -38,4 +41,5 @@ protected:
     } pc;
     unsigned int syscallPointer;
     bool finished;
+    unsigned int coreIndex;
 };

@@ -29,6 +29,7 @@ void Application::setPC(unsigned int syscallIndex) {
 
 bool Application::moveToNextSyscall() {
     if(syscallPointer == spec->getNSyscalls()-1) return false;
+    cout << "syscall moved from " << syscallPointer << " to " << syscallPointer+1 << endl;
     syscallPointer++;
     setPC(syscallPointer);
     return true;

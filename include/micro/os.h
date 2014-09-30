@@ -1,6 +1,7 @@
 #pragma once
 
 #include <os.h>
+#include <vector>
 
 class MicroOS : public OS {
 public:
@@ -20,6 +21,7 @@ public:
         Service(ServiceType type, int ticks):type(type), ticks(ticks) { };
         ServiceType type;
         int ticks;
+        std::vector<int> runningCoreIndex;
     };
 
     static Service **services;

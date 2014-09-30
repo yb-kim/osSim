@@ -1,15 +1,15 @@
 {
-    "osType": "micro",
+    "osType": "mono",
 
     "os": {
         "maxTick": 1000000,
-        "unitTick": 30,
+        "unitTick": 10,
         "contextSwitchTick": 50,
         "nApps": 10
     },
 
     "env": {
-        "nCores": 4
+        "nCores": 6
     },
 
     "appQueue": {

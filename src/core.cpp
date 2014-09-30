@@ -14,4 +14,5 @@ Core::Core(unsigned int index):
 
 void Core::loadApp(Application *app) {
     appRunning = app;
+    app->setCoreIndex(index);
 }

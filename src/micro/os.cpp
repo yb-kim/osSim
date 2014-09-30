@@ -21,6 +21,7 @@ MicroOS::MicroOS(Config *cfg) : OS(cfg) {
 
 void MicroOS::init() {
     //OS::init();
+    ((MicroAppFactory *)factory)->setOS(this);
     for(int i=0; i<nApps; i++) {
         readyQueue->enque(factory->createApp());
     }
@@ -28,9 +29,11 @@ void MicroOS::init() {
     env->getCore(0)->loadApp(new NSServiceApplication());
     //TODO: set os service cores
     for(int i=0; i<nSet; i++) {
-        for(int j=0; j<nServices; j++) {
-            env->getCore(nServices*i+j)->loadApp(
+        for(int j=1; j<nServices; j++) {
+            int index = nServices*i+j;
+            env->getCore(index)->loadApp(
                     new MicroServiceApplication(services[j]->type));
+            services[j]->runningCoreIndex.push_back(index);
         }
     }
     for(int i=nSet*nServices; i<env->getNCores(); i++) {
@@ -41,7 +44,7 @@ void MicroOS::init() {
 
 MicroOS::Service* MicroOS::getService(ServiceType serviceType) {
     for(int i=0; i<nServices; i++) {
-        if(services[i]->type == (ServiceType)i) {
+        if(services[i]->type == serviceType) {
             return services[i];
         }
     }
@@ -77,5 +80,17 @@ void MicroOS::checkAndDoSchedule() {
 }
 
 void MicroOS::afterExecute() {
+    for(unsigned int i=0; i<env->getNCores(); i++) {
+        Core *core = env->getCore(i);
+        MicroApplication *app = (MicroApplication *)core->getAppRunning();
+        app->setNSCacheExpiration(
+                app->getNSCacheExpiration()-unitTick);
+        if(app->isFinished()) {
+            nAppsFinished++;
+            delete app;
+            readyQueue->enque(factory->createApp());
+            core->loadApp(readyQueue->deque());
+        }
+    }
     return;
 }

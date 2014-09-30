@@ -16,6 +16,8 @@ public:
     virtual void afterExecute() = 0;
     virtual void wrapUp();
 
+    Environment* getEnv() { return env; }
+
 protected:
     Environment *env;
     AppFactory *factory;

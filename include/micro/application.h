@@ -3,6 +3,7 @@
 #include <application.h>
 #include <micro/os.h>
 #include <micro/request.h>
+#include <micro/syscall.h>
 #include <queue>
 #include <list>
 
@@ -16,9 +17,38 @@ public:
     virtual void run(unsigned int unitTick);
     void freeLock();
 
-private:
-    MicroOS::Service *service;
+    enum State {
+        INVALID,
+        NORMAL,
+        WAITING_NS,
+        WAITING,
+        TERMINATED
+    };
+
+    void setState(State s) { state = s; }
+
+    class PC {
+    public:
+        MicroSyscallSpec *spec;
+        unsigned int serviceIndex;
+        unsigned int normalTicks;
+    } pc;
+
+    void setOS(MicroOS *_os) { os = _os; }
+    void setNSCacheExpiration(unsigned int n) { nsExpiration = n; }
+    int getNSCacheExpiration() { return nsExpiration; }
+
+protected:
+    State state;
+    MicroOS* os;
+    int nsExpiration;
+    //MicroOS::Service *service;
     void ipc(MicroOS::ServiceType serviceType);
+    void setPC(unsigned int syscallIndex);
+    unsigned int processNormalTicks(unsigned int ticks);
+    
+    unsigned int remainingTicks;
+    bool isSyscallFinished();
 };
 
 
@@ -26,11 +56,12 @@ class MicroServiceApplication : public MicroApplication {
 public:
     MicroServiceApplication();
     MicroServiceApplication(MicroOS::ServiceType serviceType);
+    void enque(Request *request);
     virtual void run(unsigned int unitTick);
 
-private:
+protected:
     MicroOS::Service* service;
-    queue<Request, list<Request> > requestQueue;
+    queue<Request *, list<Request *> > requestQueue;
 
 };
 
