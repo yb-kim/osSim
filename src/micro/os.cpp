@@ -21,12 +21,21 @@ MicroOS::MicroOS(Config *cfg) : OS(cfg) {
 
 void MicroOS::init() {
     //OS::init();
+    for(int i=0; i<nApps; i++) {
+        readyQueue->enque(factory->createApp());
+    }
     //TODO: set core 0 as NS
     env->getCore(0)->loadApp(new NSServiceApplication());
     //TODO: set os service cores
-    for(int i=FM; i<SERVICES_END; i++) {
+    for(int i=0; i<nSet; i++) {
+        for(int j=0; j<nServices; j++) {
+            env->getCore(nServices*i+j)->loadApp(
+                    new MicroServiceApplication(services[j]->type));
+        }
+    }
+    for(int i=nSet*nServices; i<env->getNCores(); i++) {
         env->getCore(i)->loadApp(
-                new MicroServiceApplication((ServiceType)i));
+                readyQueue->deque());
     }
 }
 

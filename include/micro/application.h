@@ -17,6 +17,7 @@ public:
     void freeLock();
 
 private:
+    MicroOS::Service *service;
     void ipc(MicroOS::ServiceType serviceType);
 };
 
@@ -24,7 +25,7 @@ private:
 class MicroServiceApplication : public MicroApplication {
 public:
     MicroServiceApplication();
-    MicroServiceApplication(MicroOS::ServiceType service);
+    MicroServiceApplication(MicroOS::ServiceType serviceType);
     virtual void run(unsigned int unitTick);
 
 private:

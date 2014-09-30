@@ -22,8 +22,9 @@ MicroServiceApplication::MicroServiceApplication() : MicroApplication(-1) {
 }
 
 MicroServiceApplication::MicroServiceApplication(
-        MicroOS::ServiceType service):
-    MicroApplication(-1)
+        MicroOS::ServiceType serviceType):
+    MicroApplication(-1),
+    service(MicroOS::getService(serviceType))
 {
     //
 }
