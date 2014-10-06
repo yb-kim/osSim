@@ -26,19 +26,14 @@ protected:
     static unsigned int nSpecs;
 
     //private functions
-    virtual void setPC(unsigned int syscallIndex);
+    virtual void setPC(unsigned int syscallIndex) = 0;
     bool moveToNextSyscall(); // returns false when there is no syscall remaining
-    bool isSyscallFinished();
     static void readConfig(std::string appSpecConfig);
 
     //private variables
     static rapidjson::Document* specConfig;
     int specIndex;
     ApplicationSpec *spec;
-    struct PC {
-        unsigned int normalTicks;
-        unsigned int lockTicks;
-    } pc;
     unsigned int syscallPointer;
     bool finished;
     unsigned int coreIndex;

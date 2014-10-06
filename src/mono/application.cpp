@@ -46,3 +46,13 @@ unsigned int MonoApplication::processLockTicks(unsigned int tick) {
 void MonoApplication::freeLock() {
     Syscall::freeLock(specIndex, this);
 }
+
+void MonoApplication::setPC(unsigned int syscallIndex) {
+    SyscallSpec *syscall = Syscall::getSyscallSpec(spec->getSyscallIndex()[syscallIndex]);
+    pc.normalTicks = syscall->getNormalTicks();
+    pc.lockTicks = syscall->getLockTicks();
+}
+
+bool MonoApplication::isSyscallFinished() {
+    return ((pc.normalTicks == 0) && (pc.lockTicks == 0));
+}

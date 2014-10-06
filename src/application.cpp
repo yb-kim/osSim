@@ -18,13 +18,6 @@ Application::Application(int appSpecIndex):
 {
     specIndex = appSpecIndex;
     spec = Application::getAppSpec(specIndex);
-    //setPC(syscallPointer);
-}
-
-void Application::setPC(unsigned int syscallIndex) {
-    SyscallSpec *syscall = Syscall::getSyscallSpec(spec->getSyscallIndex()[syscallIndex]);
-    pc.normalTicks = syscall->getNormalTicks();
-    pc.lockTicks = syscall->getLockTicks();
 }
 
 bool Application::moveToNextSyscall() {
@@ -34,11 +27,6 @@ bool Application::moveToNextSyscall() {
     setPC(syscallPointer);
     return true;
 }
-
-bool Application::isSyscallFinished() {
-    return ((pc.normalTicks == 0) && (pc.lockTicks == 0));
-}
-
 
 void Application::readConfig(string appSpecConfig) {
     ifstream inFile(appSpecConfig.c_str());

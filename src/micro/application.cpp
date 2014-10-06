@@ -14,6 +14,8 @@ void MicroApplication::run(unsigned int unitTick) {
     remainingTicks = unitTick;
     if(state==WAITING || state==WAITING_NS) {
         cout << "Waiting ipc result..." << endl;
+        int processed = processNormalTicks(unitTick);
+        cout << "normal tick processed: " << processed << endl;
         return;
     }
     //process ipc
@@ -127,7 +129,7 @@ void NSServiceApplication::run(unsigned int unitTick) {
         cout << "processing NS request from core " << req->src->getCoreIndex() << endl;
         requestQueue.pop();
         req->src->setState(NORMAL);
-        req->src->setNSCacheExpiration(100);
+        req->src->setNSCacheExpiration(10000);
         remainingTicks -= service->ticks;
         delete req;
     }

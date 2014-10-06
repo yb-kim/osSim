@@ -3,13 +3,13 @@
         {
             "name": "t1",
             "services": ["PM", "FM"],
-            "normalTicks": 100
+            "normalTicks": 1000
         },
 
         {
             "name": "t2", 
             "services": ["FM", "FM", "FM"],
-            "normalTicks": 10
+            "normalTicks": 100
         }
     ]
 }
