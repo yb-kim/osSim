@@ -7,6 +7,8 @@ MicroApplication::MicroApplication(int appSpecIndex) : Application(appSpecIndex)
     remainingTicks = 0;
     state = NORMAL;
     nsExpiration = 0;
+    nsCache = new unsigned int[MicroOS::nServices];
+    for(int i=0; i<MicroOS::nServices; i++) nsCache[i] = 0;
     if(appSpecIndex >= 0) setPC(syscallPointer);
 }
 
@@ -62,6 +64,7 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
         MicroOS::ServiceType type = pc.spec->getServiceType(pc.serviceIndex);
         MicroOS::Service *s = MicroOS::getService(type);
         cout << "making request to core " << s->runningCoreIndex[0] << endl;
+        //dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCache[type])->getAppRunning();
         dest = (MicroServiceApplication *)os->getEnv()->getCore(s->runningCoreIndex[0])->getAppRunning();
     }
     Request *req = new Request(this, dest);
@@ -128,6 +131,13 @@ void NSServiceApplication::run(unsigned int unitTick) {
         Request *req = requestQueue.front();
         cout << "processing NS request from core " << req->src->getCoreIndex() << endl;
         requestQueue.pop();
+        //update src's nsCache
+        unsigned int *ns = req->src->getNsCache();
+        for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
+            MicroOS::ServiceType type = (MicroOS::ServiceType) i;
+            MicroOS::Service *s = MicroOS::getService(type);
+            ns[i] = s->runningCoreIndex[0];
+        }
         req->src->setState(NORMAL);
         req->src->setNSCacheExpiration(10000);
         remainingTicks -= service->ticks;

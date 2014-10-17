@@ -37,6 +37,7 @@ public:
     void setOS(MicroOS *_os) { os = _os; }
     void setNSCacheExpiration(unsigned int n) { nsExpiration = n; }
     int getNSCacheExpiration() { return nsExpiration; }
+    unsigned int* getNsCache() { return nsCache; }
 
 protected:
     State state;
@@ -49,6 +50,8 @@ protected:
     
     unsigned int remainingTicks;
     bool isSyscallFinished();
+    unsigned int *nsCache; //saves core index of each services
+
 };
 
 
