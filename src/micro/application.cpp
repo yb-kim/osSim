@@ -64,11 +64,13 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
         MicroOS::ServiceType type = pc.spec->getServiceType(pc.serviceIndex);
         MicroOS::Service *s = MicroOS::getService(type);
         cout << "making request to core " << s->runningCoreIndex[0] << endl;
-        //dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCache[type])->getAppRunning();
-        dest = (MicroServiceApplication *)os->getEnv()->getCore(s->runningCoreIndex[0])->getAppRunning();
+        dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCache[type])->getAppRunning();
+        //dest = (MicroServiceApplication *)os->getEnv()->getCore(s->runningCoreIndex[0])->getAppRunning();
     }
     Request *req = new Request(this, dest);
-    dest->enque(req);
+    //dest->enque(req);
+    //request ipc message to os
+    sendRequest(req);
     if(nsExpiration <= 0) {
         state = WAITING_NS;
         cout << "send NS request to core 0" << endl;
@@ -89,16 +91,21 @@ void MicroApplication::setPC(unsigned int syscallIndex) {
     pc.normalTicks = pc.spec->getNormalTicks();
 }
 
+void MicroApplication::sendRequest(Request *req) {
+    os->getRequest(req);
+}
+
 MicroServiceApplication::MicroServiceApplication() : MicroApplication(-1) {
     //
 }
 
 MicroServiceApplication::MicroServiceApplication(
-        MicroOS::ServiceType serviceType):
+        MicroOS::ServiceType serviceType,
+        MicroOS* os):
     MicroApplication(-1),
     service(MicroOS::getService(serviceType))
 {
-    //
+    setOS(os);
 }
 
 void MicroServiceApplication::enque(Request *request) {
@@ -112,14 +119,23 @@ void MicroServiceApplication::run(unsigned int unitTick) {
         Request *req = requestQueue.front();
         cout << "processing request from core " << req->src->getCoreIndex() << endl;
         requestQueue.pop();
+        /*
         req->src->setState(NORMAL);
         remainingTicks -= service->ticks;
         delete req;
+        */
+        Request *newReq = new Request();
+        newReq->dest = req->src;
+        newReq->src = this;
+        os->getRequest(newReq);
+        delete req;
+        remainingTicks -= service->ticks;
     }
     return;
 }
 
-NSServiceApplication::NSServiceApplication() : MicroServiceApplication() {
+NSServiceApplication::NSServiceApplication(MicroOS *os) : MicroServiceApplication() {
+    setOS(os);
     service = MicroOS::getService(MicroOS::NS);
     cout << "NSServiceApp is created" << endl;
 }
@@ -138,10 +154,18 @@ void NSServiceApplication::run(unsigned int unitTick) {
             MicroOS::Service *s = MicroOS::getService(type);
             ns[i] = s->runningCoreIndex[0];
         }
+        Request *newReq = new Request();
+        newReq->dest = req->src;
+        newReq->src = this;
+        os->getRequest(newReq);
+        remainingTicks -= service->ticks;
+        delete req;
+        /*
         req->src->setState(NORMAL);
         req->src->setNSCacheExpiration(10000);
         remainingTicks -= service->ticks;
         delete req;
+        */
     }
     return;
 }

@@ -7,7 +7,7 @@
 #include <queue>
 #include <list>
 
-class Request;
+class MicroSyscallSpec;
 
 using namespace std;
 
@@ -46,6 +46,7 @@ protected:
     //MicroOS::Service *service;
     void ipc(MicroOS::ServiceType serviceType);
     void setPC(unsigned int syscallIndex);
+    void sendRequest(Request *req);
     unsigned int processNormalTicks(unsigned int ticks);
     
     unsigned int remainingTicks;
@@ -58,7 +59,7 @@ protected:
 class MicroServiceApplication : public MicroApplication {
 public:
     MicroServiceApplication();
-    MicroServiceApplication(MicroOS::ServiceType serviceType);
+    MicroServiceApplication(MicroOS::ServiceType serviceType, MicroOS *os);
     void enque(Request *request);
     virtual void run(unsigned int unitTick);
 
@@ -71,7 +72,7 @@ protected:
 
 class NSServiceApplication : public MicroServiceApplication {
 public:
-    NSServiceApplication();
+    NSServiceApplication(MicroOS *os);
     void run(unsigned int unitTick);
 
 private:

@@ -26,13 +26,13 @@ void MicroOS::init() {
         readyQueue->enque(factory->createApp());
     }
     //TODO: set core 0 as NS
-    env->getCore(0)->loadApp(new NSServiceApplication());
+    env->getCore(0)->loadApp(new NSServiceApplication(this));
     //TODO: set os service cores
     for(int i=0; i<nSet; i++) {
         for(int j=1; j<nServices; j++) {
             int index = nServices*i+j;
             env->getCore(index)->loadApp(
-                    new MicroServiceApplication(services[j]->type));
+                    new MicroServiceApplication(services[j]->type, this));
             services[j]->runningCoreIndex.push_back(index);
         }
     }
@@ -76,7 +76,19 @@ void MicroOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
 
 
 void MicroOS::checkAndDoSchedule() {
-    return;
+    list< RequestEntry *>::iterator iter = waitingRequests.begin();
+    list< RequestEntry *>::iterator iterEnd = waitingRequests.end();
+    while(iter != waitingRequests.end()) {
+        RequestEntry *entry = *iter;
+        entry->ticks -= unitTick;
+        if(entry->ticks <= 0) {
+            sendRequest(entry->req);
+            delete entry;
+            iter = waitingRequests.erase(iter);
+            continue;
+        }
+        iter++;
+    }
 }
 
 void MicroOS::afterExecute() {
@@ -93,4 +105,54 @@ void MicroOS::afterExecute() {
         }
     }
     return;
+}
+
+void MicroOS::getRequest(Request *req) {
+    RequestEntry *entry = new RequestEntry();
+    entry->ticks = getIpcTicks(req);
+    entry->req = req;
+    waitingRequests.size();
+    waitingRequests.push_back(entry);
+    return;
+}
+
+int MicroOS::getIpcTicks(Request *req) {
+    return 10;
+}
+
+void MicroOS::sendRequest(Request *req) {
+    MicroApplication *src = req->src;
+    MicroApplication *dest = req->dest;
+    //if(typeid(dest)==typeid(MicroServiceApplication)) {
+    if(dynamic_cast<NSServiceApplication *>(dest)) {
+        cout << "NS service recieved the request from core " << 
+            src->getCoreIndex() << endl;
+        NSServiceApplication *target = (NSServiceApplication *)dest;
+        target->enque(req);
+    } else if(dynamic_cast<MicroServiceApplication *>(dest)) {
+    //} else if(typeid(dest)==typeid(NSServiceApplication)) {
+        cout << "Service core " << dest->getCoreIndex() <<
+            " recieved the request from core " << 
+            src->getCoreIndex() << endl;
+        MicroServiceApplication *target = (MicroServiceApplication *)dest;
+        target->enque(req);
+    } else {
+        //if the request is sent from service core to an application core
+        cout << "Core " << dest->getCoreIndex() <<
+            " recieved the response from service core " <<
+            src->getCoreIndex() << endl;
+        dest->setState(MicroApplication::NORMAL);
+        if(dynamic_cast<NSServiceApplication *>(src)) {
+            //if the request is sent from NS
+            //update src's nsCache
+            unsigned int *ns = req->dest->getNsCache();
+            for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
+                MicroOS::ServiceType type = (MicroOS::ServiceType) i;
+                MicroOS::Service *s = MicroOS::getService(type);
+                ns[i] = s->runningCoreIndex[0];
+            }
+            req->dest->setNSCacheExpiration(10000);
+        }
+        delete req;
+    }
 }

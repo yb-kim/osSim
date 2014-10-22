@@ -2,6 +2,10 @@
 
 #include <os.h>
 #include <vector>
+#include <list>
+#include <typeinfo>
+
+class Request;
 
 class MicroOS : public OS {
 public:
@@ -24,6 +28,11 @@ public:
         std::vector<int> runningCoreIndex;
     };
 
+    struct RequestEntry {
+        int ticks;
+        Request *req;
+    };
+
     static Service **services;
     static int nServices;
     static int nSet;
@@ -37,6 +46,13 @@ public:
     }
 
     static Service* getService(ServiceType serviceType);
+
+    void getRequest(Request *req);
 private:
+    std::list< RequestEntry * > waitingRequests;
     void setOsSpecificSpecs(std::string osSpecificSpecs);
+    int getIpcTicks(Request *req);
+    void sendRequest(Request *req);
 };
+
+#include <micro/request.h>
