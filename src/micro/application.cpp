@@ -63,7 +63,7 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
     } else {
         MicroOS::ServiceType type = pc.spec->getServiceType(pc.serviceIndex);
         MicroOS::Service *s = MicroOS::getService(type);
-        cout << "making request to core " << s->runningCoreIndex[0] << endl;
+        cout << "making request to core " << nsCache[(int)type] << endl;
         dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCache[type])->getAppRunning();
         //dest = (MicroServiceApplication *)os->getEnv()->getCore(s->runningCoreIndex[0])->getAppRunning();
     }
@@ -138,6 +138,12 @@ NSServiceApplication::NSServiceApplication(MicroOS *os) : MicroServiceApplicatio
     setOS(os);
     service = MicroOS::getService(MicroOS::NS);
     cout << "NSServiceApp is created" << endl;
+    nSet = MicroOS::nSet;
+    int nServices = MicroOS::nServices;
+    indexCounter = new int[nServices];
+    for(int i=0; i<nServices; i++) {
+        indexCounter[i] = 0;
+    }
 }
 
 void NSServiceApplication::run(unsigned int unitTick) {
@@ -148,12 +154,15 @@ void NSServiceApplication::run(unsigned int unitTick) {
         cout << "processing NS request from core " << req->src->getCoreIndex() << endl;
         requestQueue.pop();
         //update src's nsCache
+        /*
         unsigned int *ns = req->src->getNsCache();
         for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
             MicroOS::ServiceType type = (MicroOS::ServiceType) i;
             MicroOS::Service *s = MicroOS::getService(type);
-            ns[i] = s->runningCoreIndex[0];
+            int index = getServiceCoreIndex(type);
+            ns[i] = s->runningCoreIndex[index];
         }
+        */
         Request *newReq = new Request();
         newReq->dest = req->src;
         newReq->src = this;
@@ -168,4 +177,17 @@ void NSServiceApplication::run(unsigned int unitTick) {
         */
     }
     return;
+}
+
+int NSServiceApplication::getServiceCoreIndex(MicroOS::ServiceType type) {
+    if(nSet==1) return 0;
+
+    unsigned int index = (int)type;
+    int result = indexCounter[index];
+    if(indexCounter[index] == nSet-1) {
+        indexCounter[index]=0;
+    } else {
+        indexCounter[index]++;
+    }
+    return result;
 }

@@ -5,11 +5,11 @@
         "maxTick": 10000,
         "unitTick": 10,
         "contextSwitchTick": 50,
-        "nApps": 16
+        "nApps": 32
     },
 
     "env": {
-        "nCores": 8
+        "nCores": 16
     },
 
     "appQueue": {

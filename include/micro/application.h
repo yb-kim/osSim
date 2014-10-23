@@ -73,8 +73,11 @@ protected:
 class NSServiceApplication : public MicroServiceApplication {
 public:
     NSServiceApplication(MicroOS *os);
+    int getServiceCoreIndex(MicroOS::ServiceType type);
     void run(unsigned int unitTick);
 
 private:
+    int nSet;
+    int *indexCounter;
     //
 };

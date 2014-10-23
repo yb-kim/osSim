@@ -28,15 +28,17 @@ void MicroOS::init() {
     //TODO: set core 0 as NS
     env->getCore(0)->loadApp(new NSServiceApplication(this));
     //TODO: set os service cores
+    cout << "nSet = " << nSet << endl;
     for(int i=0; i<nSet; i++) {
         for(int j=1; j<nServices; j++) {
-            int index = nServices*i+j;
+            int index = (nServices-1)*i+j;
+            cout << "loading service " << j << " on core " << index << endl;
             env->getCore(index)->loadApp(
                     new MicroServiceApplication(services[j]->type, this));
             services[j]->runningCoreIndex.push_back(index);
         }
     }
-    for(int i=nSet*nServices; i<env->getNCores(); i++) {
+    for(int i=nSet*(nServices-1)+1; i<env->getNCores(); i++) { //Exclude NS in nServices
         env->getCore(i)->loadApp(
                 readyQueue->deque());
     }
@@ -145,11 +147,13 @@ void MicroOS::sendRequest(Request *req) {
         if(dynamic_cast<NSServiceApplication *>(src)) {
             //if the request is sent from NS
             //update src's nsCache
+            NSServiceApplication *srcApp = (NSServiceApplication *)src;
             unsigned int *ns = req->dest->getNsCache();
             for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
                 MicroOS::ServiceType type = (MicroOS::ServiceType) i;
                 MicroOS::Service *s = MicroOS::getService(type);
-                ns[i] = s->runningCoreIndex[0];
+                int index = srcApp->getServiceCoreIndex(type);
+                ns[i] = s->runningCoreIndex[index];
             }
             req->dest->setNSCacheExpiration(10000);
         }
