@@ -53,6 +53,9 @@ private:
     void setOsSpecificSpecs(std::string osSpecificSpecs);
     int getIpcTicks(Request *req);
     void sendRequest(Request *req);
+
+    unsigned int nsCacheExpiration;
+    unsigned int baseIpcCost;
 };
 
 #include <micro/request.h>

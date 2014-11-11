@@ -74,6 +74,8 @@ void MicroOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
         ServiceType type = getServiceType(name);
         services[i] = new Service(type, ticks);
     }
+    nsCacheExpiration = specConfig["nsCacheExpiration"].GetInt();
+    baseIpcCost = specConfig["baseIpcCost"].GetInt();
 }
 
 
@@ -119,7 +121,7 @@ void MicroOS::getRequest(Request *req) {
 }
 
 int MicroOS::getIpcTicks(Request *req) {
-    return 10;
+    return baseIpcCost;
 }
 
 void MicroOS::sendRequest(Request *req) {
@@ -155,7 +157,7 @@ void MicroOS::sendRequest(Request *req) {
                 int index = srcApp->getServiceCoreIndex(type);
                 ns[i] = s->runningCoreIndex[index];
             }
-            req->dest->setNSCacheExpiration(10000);
+            req->dest->setNSCacheExpiration(nsCacheExpiration);
         }
         delete req;
     }
