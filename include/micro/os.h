@@ -17,6 +17,8 @@ public:
         NS, //name service
         FM,
         PM,
+        DISKIO,
+        NETIO,
         SERVICES_END //mark end of enumeration
     };
 
@@ -41,6 +43,8 @@ public:
         if(serviceString == "NS") return NS;
         else if(serviceString == "FM") return FM;
         else if(serviceString == "PM") return PM;
+        else if(serviceString == "DISKIO") return DISKIO;
+        else if(serviceString == "NETIO") return NETIO;
         else //default
             return NS;
     }
@@ -55,7 +59,7 @@ private:
     void sendRequest(Request *req);
 
     unsigned int nsCacheExpiration;
-    unsigned int baseIpcCost;
+    unsigned int ipcCost_die, ipcCost_hop, ipcCost_2hops;
 };
 
 #include <micro/request.h>

@@ -75,7 +75,9 @@ void MicroOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
         services[i] = new Service(type, ticks);
     }
     nsCacheExpiration = specConfig["nsCacheExpiration"].GetInt();
-    baseIpcCost = specConfig["baseIpcCost"].GetInt();
+    ipcCost_die = specConfig["ipcCost_die"].GetInt();
+    ipcCost_hop = specConfig["ipcCost_hop"].GetInt();
+    ipcCost_2hops = specConfig["ipcCost_2hops"].GetInt();
 }
 
 
@@ -121,7 +123,7 @@ void MicroOS::getRequest(Request *req) {
 }
 
 int MicroOS::getIpcTicks(Request *req) {
-    return baseIpcCost;
+    return ipcCost_die;
 }
 
 void MicroOS::sendRequest(Request *req) {

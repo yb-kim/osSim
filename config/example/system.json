@@ -2,8 +2,8 @@
     "osType": "micro",
 
     "os": {
-        "maxTick": 10000,
-        "unitTick": 10,
+        "maxTick": 1000000,
+        "unitTick": 100,
         "contextSwitchTick": 50,
         "nApps": 16
     },

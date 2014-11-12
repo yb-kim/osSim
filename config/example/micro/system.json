@@ -2,22 +2,33 @@
     "services": [
         {
             "name": "NS",
-            "ticks": 10
+            "ticks": 2000
         },
 
         {
             "name": "PM",
-            "ticks": 10
+            "ticks": 4000
         },
 
         {
             "name": "FM",
-            "ticks": 10
+            "ticks": 4000
+        },
+        {
+            "name": "DISKIO",
+            "ticks": 4000
+        },
+        {
+            "name": "NETIO",
+            "ticks": 4000
         }
     ],
 
     "nSet": 1,
     
-    "nsCacheExpiration": 10000,
-    "baseIpcCost": 10
+    "nsCacheExpiration": 100000,
+
+    "ipcCost_die": 214,
+    "ipcCost_hop": 914,
+    "ipcCost_2hops": 1167
 }
