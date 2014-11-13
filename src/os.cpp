@@ -32,9 +32,10 @@ OS::OS(Config *cfg) :
 void OS::run() {
     init();
     while(curTick <= maxTick) {
-        cout << "<<Tick: " << curTick << ">>" << endl;
+        cout << endl << endl << "<<Tick: " << curTick << ">>" << endl;
         checkAndDoSchedule();
         for(int i=0; i<env->getNCores(); i++) {
+            cout << "------------------" << endl;
             cout << "execute core " << env->getCore(i)->getIndex() << "..." << endl;
             executeCore(i, unitTick);
         }

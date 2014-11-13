@@ -56,12 +56,13 @@ void Syscall::setMicroSyscalls(string syscallSpecs) {
         Value& syscallConfig = (*specConfig)["types"][i];
         unsigned int normalTicks = syscallConfig["normalTicks"].GetInt();
         SizeType nServices = syscallConfig["services"].Size();
+        string name = syscallConfig["name"].GetString();
         MicroOS::ServiceType *services = new MicroOS::ServiceType[nServices];
         for(SizeType j=0; j<nServices; j++) {
             string serviceType = syscallConfig["services"][j].GetString();
             services[j] = MicroOS::getServiceType(serviceType);
         }
-        syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices);
+        syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices, name);
     }
 }
 

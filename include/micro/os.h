@@ -49,6 +49,23 @@ public:
             return NS;
     }
 
+    static std::string getServiceTypeString(ServiceType serviceType) {
+        switch(serviceType) {
+        case NS:
+            return "NS";
+        case FM:
+            return "FM";
+        case PM:
+            return "PM";
+        case DISKIO:
+            return "DISKIO";
+        case NETIO:
+            return "NETIO";
+        default:
+            return "UNKNOWN";
+        }
+    }
+
     static Service* getService(ServiceType serviceType);
 
     void getRequest(Request *req);

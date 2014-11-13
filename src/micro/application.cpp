@@ -14,10 +14,22 @@ MicroApplication::MicroApplication(int appSpecIndex) : Application(appSpecIndex)
 
 void MicroApplication::run(unsigned int unitTick) {
     remainingTicks = unitTick;
+    cout << "enter run()" << endl;
+    cout << "Syscalls: ";
+    for(int i=0; i<spec->getNSyscalls(); i++) {
+        int *syscallIndex = spec->getSyscallIndex();
+        MicroSyscallSpec *syscallSpec = (MicroSyscallSpec *)
+            Syscall::getSyscallSpec(syscallIndex[i]);
+        cout << syscallSpec->getName();
+        if(syscallPointer == i) cout << "(*)";
+        cout << " -> ";
+    }
+    cout << "TERMINATE" << endl;
     if(state==WAITING || state==WAITING_NS) {
         cout << "Waiting ipc result..." << endl;
         int processed = processNormalTicks(unitTick);
-        cout << "normal tick processed: " << processed << endl;
+        cout << "normal tick processed: " << processed <<
+            " (" << pc.normalTicks << " ticks remaining)" << endl;
         return;
     }
     //process ipc
@@ -113,6 +125,8 @@ void MicroServiceApplication::enque(Request *request) {
 }
 
 void MicroServiceApplication::run(unsigned int unitTick) {
+    cout << "Enter run() of " << MicroOS::getServiceTypeString(
+            service->type) << endl;
     cout << "Queue item remainaing: " << requestQueue.size() << endl;
     remainingTicks = unitTick;
     while((remainingTicks > 0) && !requestQueue.empty()) {
@@ -146,38 +160,41 @@ NSServiceApplication::NSServiceApplication(MicroOS *os) : MicroServiceApplicatio
     }
 }
 
-void NSServiceApplication::run(unsigned int unitTick) {
-    cout << "Queue item remainaing: " << requestQueue.size() << endl;
-    remainingTicks = unitTick;
-    while((remainingTicks > 0) && !requestQueue.empty()) {
-        Request *req = requestQueue.front();
-        cout << "processing NS request from core " << req->src->getCoreIndex() << endl;
-        requestQueue.pop();
-        //update src's nsCache
-        /*
-        unsigned int *ns = req->src->getNsCache();
-        for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
-            MicroOS::ServiceType type = (MicroOS::ServiceType) i;
-            MicroOS::Service *s = MicroOS::getService(type);
-            int index = getServiceCoreIndex(type);
-            ns[i] = s->runningCoreIndex[index];
-        }
-        */
-        Request *newReq = new Request();
-        newReq->dest = req->src;
-        newReq->src = this;
-        os->getRequest(newReq);
-        remainingTicks -= service->ticks;
-        delete req;
-        /*
-        req->src->setState(NORMAL);
-        req->src->setNSCacheExpiration(10000);
-        remainingTicks -= service->ticks;
-        delete req;
-        */
-    }
-    return;
-}
+//void NSServiceApplication::run(unsigned int unitTick) {
+//    cout << "Queue item remainaing: " << requestQueue.size() << endl;
+//    remainingTicks = unitTick;
+//    while((remainingTicks > 0) && !requestQueue.empty()) {
+//        Request *req = requestQueue.front();
+//        cout << "processing NS request from core " << req->src->getCoreIndex() << endl;
+//        requestQueue.pop();
+//        //update src's nsCache
+//        /*
+//        unsigned int *ns = req->src->getNsCache();
+//        for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
+//            MicroOS::ServiceType type = (MicroOS::ServiceType) i;
+//            MicroOS::Service *s = MicroOS::getService(type);
+//            int index = getServiceCoreIndex(type);
+//            ns[i] = s->runningCoreIndex[index];
+//        }
+//        */
+//        Request *newReq = new Request();
+//        newReq->dest = req->src;
+//        newReq->src = this;
+//        os->getRequest(newReq);
+//        int processedTicks = (remainingTicks > service->ticks ?
+//                service->ticks : remainingTicks);
+//        remainingTicks -= processedTicks;
+//        cout << "NS remainingTicks: " << remainingTicks << endl;
+//        delete req;
+//        /*
+//        req->src->setState(NORMAL);
+//        req->src->setNSCacheExpiration(10000);
+//        remainingTicks -= service->ticks;
+//        delete req;
+//        */
+//    }
+//    return;
+//}
 
 int NSServiceApplication::getServiceCoreIndex(MicroOS::ServiceType type) {
     if(nSet==1) return 0;

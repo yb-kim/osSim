@@ -2,11 +2,11 @@
     "types": [
         {
             "type": "normal",
-            "syscalls": [0, 0, 0, 0, 0]
+            "syscalls": [2, 2, 0, 1]
         },
         {
             "type": "normal",
-            "syscalls": [1, 1, 1, 1, 1]
+            "syscalls": [0, 2, 3, 3, 3, 2]
         }
     ],
         

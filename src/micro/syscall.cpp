@@ -3,10 +3,12 @@
 MicroSyscallSpec::MicroSyscallSpec(
         unsigned int _normalTicks,
         MicroOS::ServiceType *services,
-        unsigned int nServices):
+        unsigned int nServices,
+        std::string name):
     SyscallSpec(),
     services(services),
-    nServices(nServices)
+    nServices(nServices),
+    name(name)
 {
     normalTicks = _normalTicks;
 }

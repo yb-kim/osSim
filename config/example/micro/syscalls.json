@@ -1,15 +1,27 @@
 {
     "types": [
         {
-            "name": "t1",
-            "services": ["PM", "FM"],
-            "normalTicks": 50
+            "name": "getPid",
+            "services": ["PM"],
+            "normalTicks": 2000
         },
 
         {
-            "name": "t2", 
-            "services": ["FM", "PM", "FM"],
-            "normalTicks": 100
+            "name": "fork", 
+            "services": ["PM", "FM", "DISKIO"],
+            "normalTicks": 20000
+        },
+
+        {
+            "name": "read",
+            "services": ["FM", "DISKIO"],
+            "normalTicks": 5000
+        },
+
+        {
+            "name": "socket",
+            "services": ["FM", "NETIO"],
+            "normalTicks": 1000
         }
     ]
 }

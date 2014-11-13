@@ -20,6 +20,8 @@ public:
     void setCoreIndex(unsigned int index) { coreIndex = index; }
     unsigned int getCoreIndex() { return coreIndex; }
 
+    //ApplicationSpec* getAppSpec() { return spec; }
+
 protected:
     //static variables
     static ApplicationSpec **appSpecs;

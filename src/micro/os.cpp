@@ -32,7 +32,8 @@ void MicroOS::init() {
     for(int i=0; i<nSet; i++) {
         for(int j=1; j<nServices; j++) {
             int index = (nServices-1)*i+j;
-            cout << "loading service " << j << " on core " << index << endl;
+            cout << "loading " << getServiceTypeString(services[j]->type) << 
+                " service on core " << index << endl;
             env->getCore(index)->loadApp(
                     new MicroServiceApplication(services[j]->type, this));
             services[j]->runningCoreIndex.push_back(index);
@@ -130,23 +131,21 @@ void MicroOS::sendRequest(Request *req) {
     MicroApplication *src = req->src;
     MicroApplication *dest = req->dest;
     //if(typeid(dest)==typeid(MicroServiceApplication)) {
-    if(dynamic_cast<NSServiceApplication *>(dest)) {
-        cout << "NS service recieved the request from core " << 
-            src->getCoreIndex() << endl;
-        NSServiceApplication *target = (NSServiceApplication *)dest;
-        target->enque(req);
-    } else if(dynamic_cast<MicroServiceApplication *>(dest)) {
+    if(dynamic_cast<MicroServiceApplication *>(dest)) {
     //} else if(typeid(dest)==typeid(NSServiceApplication)) {
-        cout << "Service core " << dest->getCoreIndex() <<
-            " recieved the request from core " << 
-            src->getCoreIndex() << endl;
         MicroServiceApplication *target = (MicroServiceApplication *)dest;
+        cout << "Core " << dest->getCoreIndex() << "(" <<
+            getServiceTypeString(target->getService()->type) <<
+            ") recieved the request from core " << 
+            src->getCoreIndex() << endl;
         target->enque(req);
     } else {
         //if the request is sent from service core to an application core
+        MicroServiceApplication *from = (MicroServiceApplication *)src;
         cout << "Core " << dest->getCoreIndex() <<
             " recieved the response from service core " <<
-            src->getCoreIndex() << endl;
+            src->getCoreIndex() << "(" <<
+            getServiceTypeString(from->getService()->type) << ")" << endl;
         dest->setState(MicroApplication::NORMAL);
         if(dynamic_cast<NSServiceApplication *>(src)) {
             //if the request is sent from NS

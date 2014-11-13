@@ -49,7 +49,7 @@ protected:
     void sendRequest(Request *req);
     unsigned int processNormalTicks(unsigned int ticks);
     
-    unsigned int remainingTicks;
+    int remainingTicks;
     bool isSyscallFinished();
     unsigned int *nsCache; //saves core index of each services
 
@@ -62,6 +62,7 @@ public:
     MicroServiceApplication(MicroOS::ServiceType serviceType, MicroOS *os);
     void enque(Request *request);
     virtual void run(unsigned int unitTick);
+    MicroOS::Service* getService() { return service; }
 
 protected:
     MicroOS::Service* service;
@@ -74,7 +75,7 @@ class NSServiceApplication : public MicroServiceApplication {
 public:
     NSServiceApplication(MicroOS *os);
     int getServiceCoreIndex(MicroOS::ServiceType type);
-    void run(unsigned int unitTick);
+    //void run(unsigned int unitTick);
 
 private:
     int nSet;

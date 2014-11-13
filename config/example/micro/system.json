@@ -2,7 +2,7 @@
     "services": [
         {
             "name": "NS",
-            "ticks": 2000
+            "ticks": 400
         },
 
         {
