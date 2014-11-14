@@ -5,6 +5,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 using namespace rapidjson;
 using namespace std;
@@ -17,6 +19,7 @@ MicroOS::MicroOS(Config *cfg) : OS(cfg) {
     setOsSpecificSpecs(osSpecificSpecs);
     factory = new MicroAppFactory();
     Syscall::setMicroSyscalls(syscallSpecs);
+    srand(time(NULL));
 }
 
 void MicroOS::init() {
@@ -120,19 +123,33 @@ void MicroOS::getRequest(Request *req) {
     entry->req = req;
     waitingRequests.size();
     waitingRequests.push_back(entry);
+    cout << "Request is sent; the request takes " << entry->ticks << 
+        " ticks to be recieved" << endl;
     return;
 }
 
 int MicroOS::getIpcTicks(Request *req) {
-    return ipcCost_die;
+    switch(rand()%3) {
+    case 0:
+        return ipcCost_die;
+    case 1:
+        return ipcCost_hop;
+    case 2:
+        return ipcCost_2hops;
+    default:
+        return ipcCost_die;
+    }
 }
 
 void MicroOS::sendRequest(Request *req) {
-    MicroApplication *src = req->src;
-    MicroApplication *dest = req->dest;
-    //if(typeid(dest)==typeid(MicroServiceApplication)) {
+    unsigned int coreIndex = *(req->currentService);
+    MicroApplication *src = (MicroApplication *)(
+            getEnv()->getCore(coreIndex)->getAppRunning());
+    (req->currentService)++;
+    coreIndex = *(req->currentService);
+    MicroApplication *dest = (MicroApplication *)(
+            getEnv()->getCore(coreIndex)->getAppRunning());
     if(dynamic_cast<MicroServiceApplication *>(dest)) {
-    //} else if(typeid(dest)==typeid(NSServiceApplication)) {
         MicroServiceApplication *target = (MicroServiceApplication *)dest;
         cout << "Core " << dest->getCoreIndex() << "(" <<
             getServiceTypeString(target->getService()->type) <<
@@ -151,14 +168,14 @@ void MicroOS::sendRequest(Request *req) {
             //if the request is sent from NS
             //update src's nsCache
             NSServiceApplication *srcApp = (NSServiceApplication *)src;
-            unsigned int *ns = req->dest->getNsCache();
+            unsigned int *ns = dest->getNsCache();
             for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
                 MicroOS::ServiceType type = (MicroOS::ServiceType) i;
                 MicroOS::Service *s = MicroOS::getService(type);
                 int index = srcApp->getServiceCoreIndex(type);
                 ns[i] = s->runningCoreIndex[index];
             }
-            req->dest->setNSCacheExpiration(nsCacheExpiration);
+            dest->setNSCacheExpiration(nsCacheExpiration);
         }
         delete req;
     }

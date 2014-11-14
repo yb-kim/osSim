@@ -15,8 +15,8 @@ public:
     void afterExecute();
     enum ServiceType {
         NS, //name service
-        FM,
         PM,
+        FM,
         DISKIO,
         NETIO,
         SERVICES_END //mark end of enumeration

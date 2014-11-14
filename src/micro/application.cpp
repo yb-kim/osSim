@@ -40,7 +40,8 @@ void MicroApplication::run(unsigned int unitTick) {
     }
     //process normal ticks
     int processed = processNormalTicks(unitTick);
-    cout << "normal tick processed: " << processed << endl;
+    cout << "normal tick processed: " << processed <<
+        " (" << pc.normalTicks << " ticks remaining)" << endl;
 
     //move to next syscall if finished
     if(isSyscallFinished()) {
@@ -68,24 +69,37 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
     //find target
     //first look NS cache
     //if no entry in cache, make ipc to NS
+    cout << "Making IPC Request (";
+    cout << "NS cache will expire after " << nsExpiration << " ticks)" << endl;
     MicroServiceApplication *dest;
+    list< unsigned int > *sequence = new list< unsigned int>();
+    sequence->push_back(coreIndex); //sender
     if(nsExpiration <= 0) {
-        cout << "ns cache expired" << endl;
+        cout << "NS cache expired" << endl;
+        sequence->push_back(0);
         dest = (MicroServiceApplication *)os->getEnv()->getCore(0)->getAppRunning();
     } else {
+        unsigned int nServices = pc.spec->getNServices();
+        for(int i=0; i<nServices; i++) {
+            MicroOS::ServiceType type = pc.spec->getServiceType(i);
+            sequence->push_back(nsCache[type]);
+        }
         MicroOS::ServiceType type = pc.spec->getServiceType(pc.serviceIndex);
-        MicroOS::Service *s = MicroOS::getService(type);
-        cout << "making request to core " << nsCache[(int)type] << endl;
         dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCache[type])->getAppRunning();
-        //dest = (MicroServiceApplication *)os->getEnv()->getCore(s->runningCoreIndex[0])->getAppRunning();
     }
-    Request *req = new Request(this, dest);
-    //dest->enque(req);
+    sequence->push_back(coreIndex); //final reciever
+
+    //make request
+    Request *req = new Request(this, sequence, os);
+    //req = new Request(this, dest);
+
+    //print request sequence
+    req->printCoreSequence();
+
     //request ipc message to os
     sendRequest(req);
     if(nsExpiration <= 0) {
         state = WAITING_NS;
-        cout << "send NS request to core 0" << endl;
     } else {
         state = WAITING;
         pc.serviceIndex++;
@@ -125,26 +139,33 @@ void MicroServiceApplication::enque(Request *request) {
 }
 
 void MicroServiceApplication::run(unsigned int unitTick) {
-    cout << "Enter run() of " << MicroOS::getServiceTypeString(
-            service->type) << endl;
+    cout << "Enter run() of " << MicroOS::getServiceTypeString(service->type) << endl;
     cout << "Queue item remainaing: " << requestQueue.size() << endl;
-    remainingTicks = unitTick;
-    while((remainingTicks > 0) && !requestQueue.empty()) {
+
+    if(requestQueue.empty()) return; 
+
+    //Process request
+    do {
         Request *req = requestQueue.front();
-        cout << "processing request from core " << req->src->getCoreIndex() << endl;
-        requestQueue.pop();
-        /*
-        req->src->setState(NORMAL);
-        remainingTicks -= service->ticks;
-        delete req;
-        */
-        Request *newReq = new Request();
-        newReq->dest = req->src;
-        newReq->src = this;
-        os->getRequest(newReq);
-        delete req;
-        remainingTicks -= service->ticks;
-    }
+        //print process information
+        req->printCoreSequence();
+        if(remainingTicks <= 0) {
+            remainingTicks = service->ticks;
+        }
+
+        int processed = remainingTicks > unitTick ? unitTick : remainingTicks;
+        remainingTicks -= processed;
+        unitTick -= processed;
+        cout << "Request processed: " << processed <<
+            " (" << remainingTicks << " ticks remaining)" << endl;
+        if(remainingTicks <= 0) {
+            cout << "Request  from core " << req->src->getCoreIndex() <<
+                " completed" << endl;
+            os->getRequest(req);
+            requestQueue.pop();
+        }
+    } while(unitTick > 0);
+
     return;
 }
 
@@ -159,42 +180,6 @@ NSServiceApplication::NSServiceApplication(MicroOS *os) : MicroServiceApplicatio
         indexCounter[i] = 0;
     }
 }
-
-//void NSServiceApplication::run(unsigned int unitTick) {
-//    cout << "Queue item remainaing: " << requestQueue.size() << endl;
-//    remainingTicks = unitTick;
-//    while((remainingTicks > 0) && !requestQueue.empty()) {
-//        Request *req = requestQueue.front();
-//        cout << "processing NS request from core " << req->src->getCoreIndex() << endl;
-//        requestQueue.pop();
-//        //update src's nsCache
-//        /*
-//        unsigned int *ns = req->src->getNsCache();
-//        for(int i=1; i<MicroOS::nServices; i++) { //starting from 1 to exclude NS
-//            MicroOS::ServiceType type = (MicroOS::ServiceType) i;
-//            MicroOS::Service *s = MicroOS::getService(type);
-//            int index = getServiceCoreIndex(type);
-//            ns[i] = s->runningCoreIndex[index];
-//        }
-//        */
-//        Request *newReq = new Request();
-//        newReq->dest = req->src;
-//        newReq->src = this;
-//        os->getRequest(newReq);
-//        int processedTicks = (remainingTicks > service->ticks ?
-//                service->ticks : remainingTicks);
-//        remainingTicks -= processedTicks;
-//        cout << "NS remainingTicks: " << remainingTicks << endl;
-//        delete req;
-//        /*
-//        req->src->setState(NORMAL);
-//        req->src->setNSCacheExpiration(10000);
-//        remainingTicks -= service->ticks;
-//        delete req;
-//        */
-//    }
-//    return;
-//}
 
 int NSServiceApplication::getServiceCoreIndex(MicroOS::ServiceType type) {
     if(nSet==1) return 0;
