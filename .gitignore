@@ -27,7 +27,11 @@ build
 #swap files
 *.swp
 
+#excludes
 osSim
-script
 tags
 temp
+script/*
+
+#except
+!script/micro.py
