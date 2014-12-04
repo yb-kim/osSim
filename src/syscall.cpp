@@ -12,6 +12,7 @@ using namespace rapidjson;
 SyscallSpec** Syscall::syscalls;
 Application** Syscall::locks;
 Document* Syscall::specConfig;
+unsigned int Syscall::nSpecs;
 
 SyscallSpec* Syscall::getSyscallSpec(unsigned int n) {
     return syscalls[n];
@@ -33,7 +34,7 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
     readConfig(syscallSpecs);
 
     //Initialize each syscalls
-    SizeType nSpecs = (*specConfig)["types"].Size();
+    nSpecs = (*specConfig)["types"].Size();
     syscalls = (SyscallSpec **)new MonoSyscallSpec*[nSpecs];
     for(SizeType i=0; i<nSpecs; i++) {
         Value& ticks = (*specConfig)["types"][i]["ticks"];

@@ -1,17 +1,22 @@
 #include <iostream>
 #include <mono/os.h>
 #include <mono/appFactory.h>
+#include <mono/environment.h>
 #include <mono/application.h>
 
 using namespace std;
 
 MonoOS::MonoOS(Config *cfg) : OS(cfg) {
-    factory = new MonoAppFactory();
     Syscall::setMonoSyscalls(syscallSpecs);
+    env = new MonoEnvironment(cfg->getEnvConfig(), this);
+    factory = new MonoAppFactory();
 }
 
 void MonoOS::init() {
     OS::init();
+    for(unsigned int i=0; i<env->getNCores(); i++) {
+        env->getCore(i)->loadApp(readyQueue->deque());
+    }
 }
 
 void MonoOS::checkAndDoSchedule() {

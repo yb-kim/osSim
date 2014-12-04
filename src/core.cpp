@@ -12,6 +12,12 @@ Core::Core(unsigned int index):
     //
 }
 
+Core::Core(unsigned int index, Environment *env):
+    index(index), env(env)
+{
+    //
+}
+
 void Core::loadApp(Application *app) {
     appRunning = app;
     app->setCoreIndex(index);

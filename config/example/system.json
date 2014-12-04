@@ -1,5 +1,5 @@
 {
-    "osType": "micro",
+    "osType": "mono",
 
     "os": {
         "maxTick": 1000000,

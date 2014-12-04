@@ -13,9 +13,7 @@ OS::OS(Config *cfg) :
     curTick(0),
     nAppsFinished(0)
 {
-    env = new Environment(cfg->getEnvConfig());
     readyQueue = new AppQueue(cfg->getAppQueueConfig());
-    //factory = new AppFactory();
 
     configFileRoot = cfg->getConfigFileRoot();
     osTypeString = cfg->getOsTypeString();
@@ -48,9 +46,6 @@ void OS::run() {
 void OS::init() {
     for(unsigned int i=0; i<nApps; i++) {
         readyQueue->enque(factory->createApp());
-    }
-    for(unsigned int i=0; i<env->getNCores(); i++) {
-        env->getCore(i)->loadApp(readyQueue->deque());
     }
 }
 

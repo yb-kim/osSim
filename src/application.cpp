@@ -41,6 +41,7 @@ void Application::setApplications(std::string appSpecConfig) {
     readConfig(appSpecConfig);
 
     nSpecs = (*specConfig)["types"].Size();
+    cout << "nSpecs: " << nSpecs << endl;
     appSpecs = new ApplicationSpec*[nSpecs];
     for(SizeType i=0; i<nSpecs; i++) {
         ApplicationSpec::ApplicationType type;

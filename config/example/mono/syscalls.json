@@ -9,7 +9,23 @@
         },
 
         {
-            "name": "t2", 
+            "name": "t2",
+            "ticks": {
+                "normal": 100,
+                "lock": 50
+            }
+        },
+
+        {
+            "name": "t3",
+            "ticks": {
+                "normal": 50,
+                "lock": 50
+            }
+        },
+
+        {
+            "name": "t4", 
             "ticks": {
                 "normal": 0,
                 "lock": 100

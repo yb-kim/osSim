@@ -1,6 +1,7 @@
 #include <micro/os.h>
 #include <micro/appFactory.h>
 #include <micro/application.h>
+#include <micro/environment.h>
 #include <lib/rapidjson/document.h>
 #include <fstream>
 #include <sstream>
@@ -15,8 +16,10 @@ MicroOS::Service** MicroOS::services;
 int MicroOS::nSet;
 int MicroOS::nServices;
 
+
 MicroOS::MicroOS(Config *cfg) : OS(cfg) {
     setOsSpecificSpecs(osSpecificSpecs);
+    env = new MicroEnvironment(cfg->getEnvConfig());
     factory = new MicroAppFactory();
     Syscall::setMicroSyscalls(syscallSpecs);
     srand(time(NULL));

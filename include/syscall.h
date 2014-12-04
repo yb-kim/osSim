@@ -16,6 +16,7 @@ public:
 
     static void setMonoSyscalls(std::string syscallSpecs);
     static void setMicroSyscalls(std::string syscallSpecs);
+    static unsigned int getNSpecs() { return nSpecs; }
 
 private:
     Syscall() { }
@@ -23,6 +24,7 @@ private:
     static SyscallSpec **syscalls;
     static Application **locks;
     static rapidjson::Document* specConfig;
+    static unsigned int nSpecs;
 };
 
 

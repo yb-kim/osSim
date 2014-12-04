@@ -1,4 +1,7 @@
 #include <os.h>
+#include <mono/environment.h>
+
+class MonoEnvironment;
 
 class MonoOS : public OS {
 public:
