@@ -12,6 +12,8 @@ public:
         INVALID
     } CacheState;
 
+    CacheState getCacheState(unsigned int index) { return cacheStates[index]; }
+
 private:
     CacheState *cacheStates;
 };

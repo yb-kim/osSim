@@ -3,6 +3,7 @@
 #include <application.h>
 
 class Environment;
+class Application;
 
 class Core {
 public:
@@ -10,7 +11,7 @@ public:
     Core(unsigned int index);
     Core(unsigned int index, Environment *env);
     void loadApp(Application *app);
-    void run(unsigned int unitTick) { appRunning->run(unitTick); }
+    void run(unsigned int unitTick);
     Application* getAppRunning() { return appRunning; }
     unsigned int getIndex() { return index; }
     Environment* getEnv() { return env; }

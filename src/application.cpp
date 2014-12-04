@@ -58,3 +58,13 @@ void Application::setApplications(std::string appSpecConfig) {
         appSpecs[i] = new ApplicationSpec(type, syscallIndex, nSyscalls);
     }
 }
+
+
+void Application::setCoreIndex(unsigned int index) {
+    coreIndex = index;
+}
+
+
+void Application::setEnv(Environment *env) {
+    this->env = env;
+}

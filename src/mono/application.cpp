@@ -10,6 +10,7 @@ using namespace std;
 
 MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpecIndex) {
     setPC(syscallPointer);
+    state = NORMAL;
 }
 
 void MonoApplication::run(unsigned int unitTick) {
@@ -32,6 +33,7 @@ unsigned int MonoApplication::processNormalTicks(unsigned int tick) {
 }
 
 unsigned int MonoApplication::processLockTicks(unsigned int tick) {
+    getLock(specIndex);
     if(!Syscall::getLock(specIndex, this)) {
         cout << "cannot gain lock" << endl;
         return 0;
@@ -55,4 +57,32 @@ void MonoApplication::setPC(unsigned int syscallIndex) {
 
 bool MonoApplication::isSyscallFinished() {
     return ((pc.normalTicks == 0) && (pc.lockTicks == 0));
+}
+
+void MonoApplication::getLock(int specIndex) {
+    MonoEnvironment *menv = (MonoEnvironment *)env;
+    MonoCore *core = (MonoCore *)menv->getCore(coreIndex);
+    MonoCore::CacheState cacheState = core->getCacheState(specIndex);
+
+    //read cache line
+    switch(cacheState) {
+    case MonoCore::MODIFIED:
+        break;
+
+    case MonoCore::EXCLUSIVE:
+        break;
+
+    case MonoCore::SHARED:
+        break;
+
+    case MonoCore::INVALID:
+        break;
+
+    default:
+        break;
+    }
+
+    //try to get lock
+
+    //if got lock, write to cache line
 }

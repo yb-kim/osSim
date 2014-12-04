@@ -2,8 +2,12 @@
 
 #include <syscall.h>
 #include <applicationSpec.h>
+#include <environment.h>
 #include <string>
 #include <lib/rapidjson/document.h>
+
+class Environment;
+class Core;
 
 class Application {
 public:
@@ -17,7 +21,8 @@ public:
 
     virtual void run(unsigned int unitTick) = 0;
     
-    void setCoreIndex(unsigned int index) { coreIndex = index; }
+    void setCoreIndex(unsigned int index);
+    void setEnv(Environment *env);
     unsigned int getCoreIndex() { return coreIndex; }
 
     //ApplicationSpec* getAppSpec() { return spec; }
@@ -39,4 +44,5 @@ protected:
     unsigned int syscallPointer;
     bool finished;
     unsigned int coreIndex;
+    Environment *env;
 };

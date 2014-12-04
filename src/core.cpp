@@ -21,4 +21,9 @@ Core::Core(unsigned int index, Environment *env):
 void Core::loadApp(Application *app) {
     appRunning = app;
     app->setCoreIndex(index);
+    app->setEnv(env);
+}
+
+void Core::run(unsigned int unitTick) {
+    appRunning->run(unitTick);
 }

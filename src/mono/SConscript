@@ -1,6 +1,6 @@
 dirSources = ['os.cpp', 'appFactory.cpp', 
               'application.cpp', 'syscall.cpp',
               'environment.cpp', 'bus.cpp', 
-              'core.cpp']
+              'core.cpp', 'coherencyRequest.cpp']
 
 Export('dirSources')

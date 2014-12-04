@@ -8,6 +8,7 @@
 using namespace std;
 
 class OS;
+class Core;
 
 class Environment {
 public:
