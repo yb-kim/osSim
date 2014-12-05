@@ -1,7 +1,12 @@
+#pragma once
+
 #include <application.h>
 #include <string>
 #include <mono/environment.h>
 #include <mono/core.h>
+#include <mono/syscall.h>
+
+class CoherencyRequest;
 
 class MonoApplication : public Application {
 public:
@@ -14,6 +19,9 @@ public:
 
     void run(unsigned int unitTick);
     void freeLock();
+    bool snoopBus(CoherencyRequest *req);
+    State getState() { return state; }
+    void setState(State s) { state = s; }
 
     struct PC {
         unsigned int normalTicks;
@@ -23,7 +31,7 @@ public:
 private:
     unsigned int processNormalTicks(unsigned int tick); //returns ticks remaining
     unsigned int processLockTicks(unsigned int tick);
-    void getLock(int specIndex);
+    bool getLock(int specIndex);
     void setPC(unsigned int syscallIndex);
     bool isSyscallFinished();
 

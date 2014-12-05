@@ -1,3 +1,5 @@
+#pragma once
+
 #include <core.h>
 
 class MonoCore : public Core {
@@ -13,6 +15,7 @@ public:
     } CacheState;
 
     CacheState getCacheState(unsigned int index) { return cacheStates[index]; }
+    void setCacheState(unsigned int index, CacheState state);
 
 private:
     CacheState *cacheStates;

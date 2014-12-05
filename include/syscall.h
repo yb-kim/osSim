@@ -12,6 +12,7 @@ public:
     //static void setSyscalls(std::string syscallSpecs);
     static SyscallSpec* getSyscallSpec(unsigned int n); 
     static bool getLock(unsigned int syscallNum, Application *app);
+    static bool checkLock(unsigned int syscallNum, Application *app);
     static void freeLock(unsigned int syscallNum, Application *app);
 
     static void setMonoSyscalls(std::string syscallSpecs);

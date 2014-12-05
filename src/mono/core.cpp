@@ -13,3 +13,8 @@ MonoCore::MonoCore(unsigned int index,
         cacheStates[i] = INVALID;
     }
 }
+
+void MonoCore::setCacheState(unsigned int index,
+        CacheState state) { 
+    cacheStates[index] = state; 
+}

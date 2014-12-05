@@ -15,9 +15,28 @@ MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpe
 
 void MonoApplication::run(unsigned int unitTick) {
     if(isFinished()) return;
-    unsigned int remaining;
-    remaining = processNormalTicks(unitTick);
-    remaining = processLockTicks(remaining);
+    //print syscall list of this application
+    cout << "Syscalls: ";
+    for(int i=0; i<spec->getNSyscalls(); i++) {
+        int *syscallIndex = spec->getSyscallIndex();
+        MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *)
+            Syscall::getSyscallSpec(syscallIndex[i]);
+        cout << syscallSpec->getName();
+        if(syscallPointer == i) cout << "(*)";
+        cout << " -> ";
+    }
+    cout << "TERMINATE" << endl;
+    if(state == WAITING_COHERENCY_REQUEST) {
+        cout << "waiting coherency request to be finished..." << endl;
+        return;
+    }
+    unsigned int remaining = unitTick;
+    if(unitTick > 0) {
+        remaining = processNormalTicks(unitTick);
+    }
+    if(remaining > 0) {
+        remaining = processLockTicks(remaining);
+    }
     if(remaining >= 0 && isSyscallFinished()) {
         bool next = moveToNextSyscall();
         if(!next) finished = true;
@@ -28,19 +47,21 @@ void MonoApplication::run(unsigned int unitTick) {
 unsigned int MonoApplication::processNormalTicks(unsigned int tick) {
     unsigned int processed = (tick < pc.normalTicks) ? tick : pc.normalTicks;
     pc.normalTicks -= processed;
-    cout << processed << " normal ticks processed" << endl;
+    cout << "normal tick processed: " << processed <<
+        " (" << pc.normalTicks << " ticks remaining)" << endl;
     return (tick-processed);
 }
 
 unsigned int MonoApplication::processLockTicks(unsigned int tick) {
-    getLock(specIndex);
-    if(!Syscall::getLock(specIndex, this)) {
-        cout << "cannot gain lock" << endl;
+    cout << "start to process lock ticks" << endl;
+    bool success = getLock(specIndex);
+    if(!success) {
         return 0;
     }
     unsigned int processed = (tick < pc.lockTicks) ? tick : pc.lockTicks;
     pc.lockTicks -= processed;
-    cout << processed << " lock ticks processed" << endl;
+    cout << "lock tick processed: " << processed <<
+        " (" << pc.lockTicks << " ticks remaining)" << endl;
     if(pc.lockTicks == 0) Syscall::freeLock(specIndex, this);
     return (tick-processed);
 }
@@ -59,23 +80,40 @@ bool MonoApplication::isSyscallFinished() {
     return ((pc.normalTicks == 0) && (pc.lockTicks == 0));
 }
 
-void MonoApplication::getLock(int specIndex) {
+bool MonoApplication::getLock(int specIndex) {
     MonoEnvironment *menv = (MonoEnvironment *)env;
     MonoCore *core = (MonoCore *)menv->getCore(coreIndex);
     MonoCore::CacheState cacheState = core->getCacheState(specIndex);
+    Bus *bus = menv->getBus();
 
     //read cache line
     switch(cacheState) {
     case MonoCore::MODIFIED:
+        cout << "Cache line is in MODIFIED state" << endl;
         break;
 
     case MonoCore::EXCLUSIVE:
+        cout << "Cache line is in EXCLUSIVE state" << endl;
         break;
 
     case MonoCore::SHARED:
+        cout << "Cache line is in SHARED state" << endl;
         break;
 
     case MonoCore::INVALID:
+        //send request to bus
+        cout << "cache line is in INVALID state" << endl;
+        CoherencyRequest *req;
+        req = new CoherencyRequest(
+                CoherencyRequest::READ,
+                core,
+                specIndex);
+        cout << "send coherency request to the bus (core " << 
+            core->getIndex() << ")" << endl;
+        bus->enque(req);
+        state = WAITING_COHERENCY_REQUEST;
+        cout << "waiting the cache block is coming..." << endl;
+        return false;
         break;
 
     default:
@@ -83,6 +121,90 @@ void MonoApplication::getLock(int specIndex) {
     }
 
     //try to get lock
+    bool success = Syscall::checkLock(specIndex, this);
 
     //if got lock, write to cache line
+    if(success) {
+        cout << "The lock is not taken by other processes; " <<
+            "try to take the lock" << endl;
+        bool lockAquired = false;
+
+        switch(cacheState) {
+        case MonoCore::MODIFIED:
+            lockAquired = Syscall::getLock(specIndex, this);
+            //lockAquired must be true
+            if(!lockAquired) {
+                cout << "Error: lock aquisition in MODIFED failed" << endl;
+            } else {
+                cout << "Lock taken" << endl;
+            }
+            return true;
+
+        case MonoCore::EXCLUSIVE:
+            lockAquired = Syscall::getLock(specIndex, this);
+            //lockAquired must be true
+            if(!lockAquired) {
+                cout << "Error: lock aquisition in EXCLUSIVE failed" << endl;
+            }
+            core->setCacheState(specIndex, MonoCore::MODIFIED);
+            return true;
+
+        case MonoCore::SHARED:
+            CoherencyRequest *req;
+            req = new CoherencyRequest(
+                    CoherencyRequest::INVALIDATION,
+                    core,
+                    specIndex);
+            cout << "send invalidation coherency request to bus (core " << core->getIndex() << ")" << endl;
+            bus->enque(req);
+            state = WAITING_COHERENCY_REQUEST;
+            return false;
+
+        case MonoCore::INVALID:
+            cout << "Error: cache state must not be in INVALID state when write" << endl;
+            return false;
+
+        defalut:
+            break;
+        }
+
+    } else {
+        //wait to aquire lock
+        cout << "The lock is taken by another process" << endl;
+        return false;
+    }
+
+    return false;
+}
+
+
+bool MonoApplication::snoopBus(CoherencyRequest *req) {
+    unsigned int syscallIndex = req->syscallIndex;
+    MonoEnvironment *menv = (MonoEnvironment *)env;
+    MonoCore *core = (MonoCore *)menv->getCore(coreIndex);
+    MonoCore::CacheState cacheState = core->getCacheState(syscallIndex);
+
+    if(req->requestType == CoherencyRequest::READ) {
+        switch(cacheState) {
+        case MonoCore::MODIFIED:
+        case MonoCore::EXCLUSIVE:
+        case MonoCore::SHARED: {
+            req->src->setCacheState(syscallIndex, MonoCore::SHARED);
+            core->setCacheState(syscallIndex, MonoCore::SHARED);
+            MonoApplication *app = (MonoApplication *)req->src->getAppRunning();
+            app->setState(NORMAL);
+            return true;
+        }
+
+        case MonoCore::INVALID:
+            return false;
+
+        default:
+            return false;
+        }
+    } else { //INVALIDATION
+        core->setCacheState(syscallIndex, MonoCore::INVALID);
+        //return false to deliver this request to next core
+        return false;
+    }
 }

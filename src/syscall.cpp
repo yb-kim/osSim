@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <string>
 
 using namespace std;
 using namespace rapidjson;
@@ -40,7 +41,8 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
         Value& ticks = (*specConfig)["types"][i]["ticks"];
         unsigned int normalTicks = ticks["normal"].GetInt();
         unsigned int lockTicks = ticks["lock"].GetInt();
-        syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks);
+        string name = (*specConfig)["types"][i]["name"].GetString();
+        syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks, name);
     }
 
     //Initialize locks
@@ -77,4 +79,12 @@ bool Syscall::getLock(unsigned int syscallNum, Application *app) {
 
 void Syscall::freeLock(unsigned int syscallNum, Application *app) {
     if(locks[syscallNum]==app) locks[syscallNum] = NULL;
+}
+
+
+bool Syscall::checkLock(unsigned int syscallNum, Application *app) {
+    if(locks[syscallNum]==NULL || locks[syscallNum]==app) {
+        return true;
+    }
+    return false;
 }
