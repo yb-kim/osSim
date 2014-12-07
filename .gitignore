@@ -35,3 +35,4 @@ script/*
 
 #except
 !script/micro.py
+!script/mono.py
