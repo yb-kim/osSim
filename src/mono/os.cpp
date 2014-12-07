@@ -3,13 +3,18 @@
 #include <mono/appFactory.h>
 #include <mono/environment.h>
 #include <mono/application.h>
+#include <lib/rapidjson/document.h>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
+using namespace rapidjson;
 
 MonoOS::MonoOS(Config *cfg) : OS(cfg) {
     Syscall::setMonoSyscalls(syscallSpecs);
     env = new MonoEnvironment(cfg->getEnvConfig(), this);
     factory = new MonoAppFactory();
+    setOsSpecificSpecs(osSpecificSpecs);
 }
 
 void MonoOS::init() {
@@ -43,7 +48,12 @@ void MonoOS::checkAndDoSchedule() {
 void MonoOS::afterExecute() {
     untilContextSwitch -= unitTick;
     MonoEnvironment *menv = (MonoEnvironment *)env;
-    for(unsigned int i=0; i<3; i++) {
+    unsigned int nRequests = unitTick / coherencyRequestTicks;
+    cout << "------------------" << endl;
+    cout << "start processing coherency requests" << endl;
+    cout << "maximum of " << nRequests << " requests can be processed" << endl;
+    cout << menv->getBus()->getQueueSize() << " requests in the queue" << endl;
+    for(unsigned int i=0; i<nRequests; i++) {
         CoherencyRequest *req = menv->getBus()->deque();
         if(!req) {
             cout << "no request to process" << endl;
@@ -51,9 +61,9 @@ void MonoOS::afterExecute() {
         }
         //If there is request to process
         bool processed = false;
+        cout << "processing request: " << req->getDescription() << endl;
         for(unsigned int i=0; i<env->getNCores(); i++) {
             MonoCore *srcCore = req->src;
-            cout << "process request from core " << srcCore->getIndex() << endl;
             Core *core = env->getCore(i);
             MonoApplication *app = (MonoApplication *)(core->getAppRunning());
             processed = app->snoopBus(req);
@@ -66,6 +76,8 @@ void MonoOS::afterExecute() {
         unsigned int syscallIndex = req->syscallIndex;
         switch(req->requestType) {
         case CoherencyRequest::READ: 
+            cout << "request is processed by memory "
+                << "and changed state to EXCLUSIVE" << endl;
             req->src->setCacheState(syscallIndex, MonoCore::EXCLUSIVE);
             break;
 
@@ -80,3 +92,16 @@ void MonoOS::afterExecute() {
     cout << endl;
 }
 
+
+void MonoOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
+    ifstream inFile(osSpecificSpecs.c_str());
+    std::stringstream buffer;
+    buffer << inFile.rdbuf();
+    string jsonConfig(buffer.str());
+    Document specs;
+    specs.Parse(jsonConfig.c_str());
+    Document specConfig;
+    specConfig.Parse(jsonConfig.c_str());
+
+    coherencyRequestTicks = specConfig["coherencyRequestTicks"].GetInt();
+}

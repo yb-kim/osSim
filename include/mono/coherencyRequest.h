@@ -16,6 +16,7 @@ public:
     RequestType requestType;
     MonoCore *src;
     unsigned int syscallIndex;
+    std::string getDescription();
 
 private:
     //

@@ -32,16 +32,20 @@ private:
 class SyscallSpec {
 public:
     SyscallSpec() { }
-    SyscallSpec(unsigned int _normalTicks, unsigned int _lockTicks):
-        normalTicks(_normalTicks), lockTicks(_lockTicks)
+    SyscallSpec(unsigned int _normalTicks, unsigned int _lockTicks,
+            unsigned int index):
+        normalTicks(_normalTicks), lockTicks(_lockTicks),
+        index(index)
     {
         //
     }
 
     unsigned int getNormalTicks() { return normalTicks; }
     unsigned int getLockTicks() { return lockTicks; }
+    unsigned int getIndex() { return index; }
 
 protected:
     unsigned int normalTicks;
     unsigned int lockTicks;
+    unsigned int index;
 };

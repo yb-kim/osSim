@@ -42,7 +42,7 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
         unsigned int normalTicks = ticks["normal"].GetInt();
         unsigned int lockTicks = ticks["lock"].GetInt();
         string name = (*specConfig)["types"][i]["name"].GetString();
-        syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks, name);
+        syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks, name, i);
     }
 
     //Initialize locks
@@ -65,7 +65,7 @@ void Syscall::setMicroSyscalls(string syscallSpecs) {
             string serviceType = syscallConfig["services"][j].GetString();
             services[j] = MicroOS::getServiceType(serviceType);
         }
-        syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices, name);
+        syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices, name, i);
     }
 }
 

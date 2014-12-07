@@ -8,6 +8,7 @@ class Bus {
 public:
     void enque(CoherencyRequest *req);
     CoherencyRequest* deque();
+    int getQueueSize() { return requestQueue.size(); }
 private:
     std::queue<CoherencyRequest *, std::list<CoherencyRequest *> > requestQueue;
 };

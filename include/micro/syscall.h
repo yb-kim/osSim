@@ -8,7 +8,8 @@ public:
     MicroSyscallSpec(unsigned int _normalTicks,
             MicroOS::ServiceType *services,
             unsigned int nServices,
-            std::string name);
+            std::string name,
+            unsigned int index);
     //
     unsigned int getNServices() { return nServices; }
     std::string getName() { return name; }

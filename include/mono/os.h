@@ -10,5 +10,6 @@ public:
     void checkAndDoSchedule();
     void afterExecute();
 private:
-    //
+    void setOsSpecificSpecs(std::string osSpecificSpecs);
+    unsigned int coherencyRequestTicks;
 };

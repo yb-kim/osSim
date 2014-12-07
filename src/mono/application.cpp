@@ -14,13 +14,13 @@ MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpe
 }
 
 void MonoApplication::run(unsigned int unitTick) {
+    cout << "Running app #" << id << endl;
     if(isFinished()) return;
     //print syscall list of this application
     cout << "Syscalls: ";
     for(int i=0; i<spec->getNSyscalls(); i++) {
-        int *syscallIndex = spec->getSyscallIndex();
-        MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *)
-            Syscall::getSyscallSpec(syscallIndex[i]);
+        //int *syscallIndex = spec->getSyscallIndex();
+        MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *) getCurrentSyscallSpec(i);
         cout << syscallSpec->getName();
         if(syscallPointer == i) cout << "(*)";
         cout << " -> ";
@@ -54,7 +54,8 @@ unsigned int MonoApplication::processNormalTicks(unsigned int tick) {
 
 unsigned int MonoApplication::processLockTicks(unsigned int tick) {
     cout << "start to process lock ticks" << endl;
-    bool success = getLock(specIndex);
+    unsigned int syscallIndex = getCurrentSyscallSpec()->getIndex();
+    bool success = getLock(syscallIndex);
     if(!success) {
         return 0;
     }
@@ -62,7 +63,7 @@ unsigned int MonoApplication::processLockTicks(unsigned int tick) {
     pc.lockTicks -= processed;
     cout << "lock tick processed: " << processed <<
         " (" << pc.lockTicks << " ticks remaining)" << endl;
-    if(pc.lockTicks == 0) Syscall::freeLock(specIndex, this);
+    if(pc.lockTicks == 0) Syscall::freeLock(syscallIndex, this);
     return (tick-processed);
 }
 
@@ -84,6 +85,7 @@ bool MonoApplication::getLock(int specIndex) {
     MonoEnvironment *menv = (MonoEnvironment *)env;
     MonoCore *core = (MonoCore *)menv->getCore(coreIndex);
     MonoCore::CacheState cacheState = core->getCacheState(specIndex);
+    MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *)getCurrentSyscallSpec();
     Bus *bus = menv->getBus();
 
     //read cache line
@@ -107,9 +109,8 @@ bool MonoApplication::getLock(int specIndex) {
         req = new CoherencyRequest(
                 CoherencyRequest::READ,
                 core,
-                specIndex);
-        cout << "send coherency request to the bus (core " << 
-            core->getIndex() << ")" << endl;
+                syscallSpec->getIndex());
+        cout << "send coherency request to the bus" << endl;
         bus->enque(req);
         state = WAITING_COHERENCY_REQUEST;
         cout << "waiting the cache block is coming..." << endl;
@@ -154,10 +155,11 @@ bool MonoApplication::getLock(int specIndex) {
             req = new CoherencyRequest(
                     CoherencyRequest::INVALIDATION,
                     core,
-                    specIndex);
-            cout << "send invalidation coherency request to bus (core " << core->getIndex() << ")" << endl;
+                    syscallSpec->getIndex());
+            cout << "send coherency request to bus" << endl;
             bus->enque(req);
             state = WAITING_COHERENCY_REQUEST;
+            cout << "waiting the cache block is coming..." << endl;
             return false;
 
         case MonoCore::INVALID:
@@ -189,6 +191,9 @@ bool MonoApplication::snoopBus(CoherencyRequest *req) {
         case MonoCore::MODIFIED:
         case MonoCore::EXCLUSIVE:
         case MonoCore::SHARED: {
+            cout << "core " << core->getIndex() << " snooped the request and " <<
+                "changed the state to SHARED" << endl;
+            cout << "request: " << req->getDescription() << endl;
             req->src->setCacheState(syscallIndex, MonoCore::SHARED);
             core->setCacheState(syscallIndex, MonoCore::SHARED);
             MonoApplication *app = (MonoApplication *)req->src->getAppRunning();
@@ -203,6 +208,11 @@ bool MonoApplication::snoopBus(CoherencyRequest *req) {
             return false;
         }
     } else { //INVALIDATION
+        if(req->src == core) return false;
+        if(core->getCacheState(syscallIndex) == 
+                MonoCore::INVALID) return false;
+        cout << "core " << core->getIndex() << " invalidated "
+            "the block of syscall " << syscallIndex << endl;
         core->setCacheState(syscallIndex, MonoCore::INVALID);
         //return false to deliver this request to next core
         return false;

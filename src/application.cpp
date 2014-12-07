@@ -11,6 +11,7 @@ using namespace rapidjson;
 ApplicationSpec** Application::appSpecs;
 unsigned int Application::nSpecs;
 Document* Application::specConfig;
+unsigned int Application::nextId = 0;
 
 Application::Application(int appSpecIndex):
     syscallPointer(0),
@@ -18,6 +19,7 @@ Application::Application(int appSpecIndex):
 {
     specIndex = appSpecIndex;
     spec = Application::getAppSpec(specIndex);
+    id = nextId++;
 }
 
 bool Application::moveToNextSyscall() {
@@ -68,4 +70,16 @@ void Application::setCoreIndex(unsigned int index) {
 
 void Application::setEnv(Environment *env) {
     this->env = env;
+}
+
+SyscallSpec* Application::getCurrentSyscallSpec(int i) {
+    unsigned int index;
+    if(i > -1) {
+        index = i;
+    } else {
+        index = syscallPointer;
+    }
+    int *syscallIndex = spec->getSyscallIndex();
+    SyscallSpec *syscallSpec = Syscall::getSyscallSpec(syscallIndex[index]);
+    return syscallSpec;
 }
