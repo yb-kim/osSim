@@ -15,7 +15,9 @@ MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpe
 
 void MonoApplication::run(unsigned int unitTick) {
     cout << "Running app #" << id << endl;
-    if(isFinished()) return;
+    if(isFinished()) {
+        return;
+    }
     //print syscall list of this application
     cout << "Syscalls: ";
     for(int i=0; i<spec->getNSyscalls(); i++) {
@@ -39,7 +41,14 @@ void MonoApplication::run(unsigned int unitTick) {
     }
     if(remaining >= 0 && isSyscallFinished()) {
         bool next = moveToNextSyscall();
-        if(!next) finished = true;
+        if(!next) {
+            finished = true;
+            MonoEnvironment *menv = (MonoEnvironment *)env;
+            MonoOS *os = (MonoOS *)menv->getOS();
+            cout << "app #" << id << " finished" << endl;
+            cout << "switch to another app" << endl;
+            os->switchApp(coreIndex);
+        }
         else run(remaining);
     }
 }
@@ -68,7 +77,8 @@ unsigned int MonoApplication::processLockTicks(unsigned int tick) {
 }
 
 void MonoApplication::freeLock() {
-    Syscall::freeLock(specIndex, this);
+    unsigned int syscallIndex = getCurrentSyscallSpec()->getIndex();
+    Syscall::freeLock(syscallIndex, this);
 }
 
 void MonoApplication::setPC(unsigned int syscallIndex) {
@@ -193,7 +203,6 @@ bool MonoApplication::snoopBus(CoherencyRequest *req) {
         case MonoCore::SHARED: {
             cout << "core " << core->getIndex() << " snooped the request and " <<
                 "changed the state to SHARED" << endl;
-            cout << "request: " << req->getDescription() << endl;
             req->src->setCacheState(syscallIndex, MonoCore::SHARED);
             core->setCacheState(syscallIndex, MonoCore::SHARED);
             MonoApplication *app = (MonoApplication *)req->src->getAppRunning();

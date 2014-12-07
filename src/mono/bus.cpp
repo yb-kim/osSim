@@ -10,3 +10,8 @@ CoherencyRequest* Bus::deque() {
     requestQueue.pop();
     return req;
 }
+
+void Bus::flushQueue() {
+    std::queue<CoherencyRequest *, std::list<CoherencyRequest *> > empty;
+    std::swap( requestQueue, empty );
+}

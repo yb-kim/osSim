@@ -1,3 +1,5 @@
+#pragma once
+
 #include <os.h>
 #include <mono/environment.h>
 
@@ -9,6 +11,7 @@ public:
     void init();
     void checkAndDoSchedule();
     void afterExecute();
+    void switchApp(unsigned int coreIndex);
 private:
     void setOsSpecificSpecs(std::string osSpecificSpecs);
     unsigned int coherencyRequestTicks;

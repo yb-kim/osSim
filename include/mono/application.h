@@ -5,6 +5,7 @@
 #include <mono/environment.h>
 #include <mono/core.h>
 #include <mono/syscall.h>
+#include <mono/os.h>
 
 class CoherencyRequest;
 

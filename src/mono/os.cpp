@@ -30,18 +30,11 @@ void MonoOS::checkAndDoSchedule() {
         untilContextSwitch = contextSwitchTick;
         //context switch
         for(unsigned int i=0; i<env->getNCores(); i++) {
-            Core* core = env->getCore(i);
-            MonoApplication *app = (MonoApplication *)(core->getAppRunning());
-            app->freeLock();
-            if(app->isFinished()) {
-                nAppsFinished++;
-                delete app;
-                readyQueue->enque(factory->createApp());
-            } else {
-                readyQueue->enque(app);
-            }
-            core->loadApp(readyQueue->deque());
+            switchApp(i);
         }
+        //flush bus
+        MonoEnvironment *menv = (MonoEnvironment *)env;
+        menv->getBus()->flushQueue();
     }
 }
 
@@ -104,4 +97,21 @@ void MonoOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
     specConfig.Parse(jsonConfig.c_str());
 
     coherencyRequestTicks = specConfig["coherencyRequestTicks"].GetInt();
+}
+
+
+void MonoOS::switchApp(unsigned int coreIndex) {
+    unsigned int i = coreIndex;
+    MonoCore* core = (MonoCore *)env->getCore(i);
+    MonoApplication *app = (MonoApplication *)(core->getAppRunning());
+    app->freeLock();
+    app->setState(MonoApplication::NORMAL);
+    if(app->isFinished()) {
+        nAppsFinished++;
+        delete app;
+        readyQueue->enque(factory->createApp());
+    } else {
+        readyQueue->enque(app);
+    }
+    core->loadApp(readyQueue->deque());
 }
