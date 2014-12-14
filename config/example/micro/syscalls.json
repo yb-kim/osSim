@@ -3,25 +3,25 @@
         {
             "name": "getPid",
             "services": ["PM"],
-            "normalTicks": 2000
+            "normalTicks": 200
         },
 
         {
             "name": "fork", 
             "services": ["PM", "FM", "DISKIO"],
-            "normalTicks": 20000
+            "normalTicks": 2000
         },
 
         {
             "name": "read",
             "services": ["FM", "DISKIO"],
-            "normalTicks": 5000
+            "normalTicks": 500
         },
 
         {
             "name": "socket",
             "services": ["FM", "NETIO"],
-            "normalTicks": 1000
+            "normalTicks": 100
         }
     ]
 }

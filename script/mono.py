@@ -38,6 +38,10 @@ with open(outFilePath+"/result.out", "w") as resultFile:
             replacement = r'\1: %d' % (n*2)
             cfg = re.sub(pat, replacement, cfg)
 
+            pat = r'("osType"): (.+)'
+            replacement = r'\1: "mono",'
+            cfg = re.sub(pat, replacement, cfg)
+
             tempCfgFile.write(cfg)
 
 

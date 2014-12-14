@@ -3,7 +3,7 @@ import os
 from subprocess import call
 import re
 
-nCores = [8, 16, 32, 64]
+nCores = [8, 16, 32, 64, 128]
 nSets = [1, 2, 4, 8]
 nServices = 4   #except NS
 
@@ -35,6 +35,10 @@ with open(outFilePath+"/result.out", "w") as resultFile:
 
             pat = r'("nApps"): (\d+)'
             replacement = r'\1: %d' % (n*2)
+            cfg = re.sub(pat, replacement, cfg)
+
+            pat = r'("osType"): (.+)'
+            replacement = r'\1: "micro",'
             cfg = re.sub(pat, replacement, cfg)
 
             tempCfgFile.write(cfg)
