@@ -1,5 +1,7 @@
 #include <iostream>
 #include <os.h> 
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -24,6 +26,8 @@ OS::OS(Config *cfg) :
     appSpecs = configFileRoot+"/apps.json";
 
     Application::setApplications(appSpecs);
+
+    srand(time(NULL));
 
 }
 

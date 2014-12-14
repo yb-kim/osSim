@@ -1,3 +1,8 @@
 {
-    "coherencyRequestTicks": 10
+    "coherencyRequestTicks": 10,
+    "coherencyRequestTicksInDie": 5,
+    "coherencyRequestTicksOneHop": 10,
+    "coherencyRequestTicksTwoHops": 12,
+    "oneHopRatio": 0.3,
+    "twoHopsRatio": 0.1
 }

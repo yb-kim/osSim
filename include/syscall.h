@@ -14,6 +14,7 @@ public:
     static bool getLock(unsigned int syscallNum, Application *app);
     static bool checkLock(unsigned int syscallNum, Application *app);
     static void freeLock(unsigned int syscallNum, Application *app);
+    static bool isTakingLock(unsigned int syscallNum, Application *app);
 
     static void setMonoSyscalls(std::string syscallSpecs);
     static void setMicroSyscalls(std::string syscallSpecs);

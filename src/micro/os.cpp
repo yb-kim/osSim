@@ -22,7 +22,6 @@ MicroOS::MicroOS(Config *cfg) : OS(cfg) {
     env = new MicroEnvironment(cfg->getEnvConfig());
     factory = new MicroAppFactory();
     Syscall::setMicroSyscalls(syscallSpecs);
-    srand(time(NULL));
 }
 
 void MicroOS::init() {

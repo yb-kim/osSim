@@ -136,6 +136,10 @@ bool MonoApplication::getLock(int specIndex) {
 
     //if got lock, write to cache line
     if(success) {
+        if(Syscall::isTakingLock(specIndex, this)) {
+            //already have the lock
+            return true;
+        }
         cout << "The lock is not taken by other processes; " <<
             "try to take the lock" << endl;
         bool lockAquired = false;

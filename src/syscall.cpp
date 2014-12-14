@@ -88,3 +88,8 @@ bool Syscall::checkLock(unsigned int syscallNum, Application *app) {
     }
     return false;
 }
+
+
+bool Syscall::isTakingLock(unsigned int syscallNum, Application *app) {
+    return locks[syscallNum]==app;
+}

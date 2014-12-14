@@ -17,6 +17,7 @@ public:
     MonoCore *src;
     unsigned int syscallIndex;
     std::string getDescription();
+    unsigned int tick;
 
 private:
     //

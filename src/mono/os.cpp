@@ -41,12 +41,13 @@ void MonoOS::checkAndDoSchedule() {
 void MonoOS::afterExecute() {
     untilContextSwitch -= unitTick;
     MonoEnvironment *menv = (MonoEnvironment *)env;
-    unsigned int nRequests = unitTick / coherencyRequestTicks;
+    int remainingTicks = unitTick;
+    //unsigned int nRequests = unitTick / coherencyRequestTicks;
     cout << "------------------" << endl;
     cout << "start processing coherency requests" << endl;
-    cout << "maximum of " << nRequests << " requests can be processed" << endl;
+    //cout << "maximum of " << nRequests << " requests can be processed" << endl;
     cout << menv->getBus()->getQueueSize() << " requests in the queue" << endl;
-    for(unsigned int i=0; i<nRequests; i++) {
+    while(remainingTicks >= coherencyRequestTicksInDie) {
         CoherencyRequest *req = menv->getBus()->deque();
         if(!req) {
             cout << "no request to process" << endl;
@@ -60,22 +61,34 @@ void MonoOS::afterExecute() {
             Core *core = env->getCore(i);
             MonoApplication *app = (MonoApplication *)(core->getAppRunning());
             processed = app->snoopBus(req);
-            if(processed) break;
+            if(processed) {
+                int cost = getCoherencyCost(req->src->getIndex(), i);
+                remainingTicks -= cost;
+                cout << "coherency Request consumes " << cost << " ticks" << endl;
+                break;
+            }
         }
 
         if(processed) continue;
         
         //If no core can process request (must be handled by memory)
         unsigned int syscallIndex = req->syscallIndex;
+        int cost;
         switch(req->requestType) {
         case CoherencyRequest::READ: 
             cout << "request is processed by memory "
                 << "and changed state to EXCLUSIVE" << endl;
             req->src->setCacheState(syscallIndex, MonoCore::EXCLUSIVE);
+            cost = getCoherencyCost(req->src->getIndex(), -1);
+            remainingTicks -= cost;
+            cout << "coherency Request consumes " << cost << " ticks" << endl;
             break;
 
         case CoherencyRequest::INVALIDATION:
             req->src->setCacheState(syscallIndex, MonoCore::MODIFIED);
+            cost = getCoherencyCost(req->src->getIndex(), -2);
+            remainingTicks -= cost;
+            cout << "coherency Request consumes " << cost << " ticks" << endl;
             break;
         }
         MonoApplication *app = (MonoApplication *)req->src->getAppRunning();
@@ -97,6 +110,12 @@ void MonoOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
     specConfig.Parse(jsonConfig.c_str());
 
     coherencyRequestTicks = specConfig["coherencyRequestTicks"].GetInt();
+    coherencyRequestTicksInDie = specConfig["coherencyRequestTicksInDie"].GetInt();
+    coherencyRequestTicksOneHop = specConfig["coherencyRequestTicksOneHop"].GetInt();
+    coherencyRequestTicksTwoHops = specConfig["coherencyRequestTicksTwoHops"].GetInt();
+    oneHopRatio = specConfig["oneHopRatio"].GetDouble();
+    twoHopsRatio = specConfig["twoHopsRatio"].GetDouble();
+    inDieRatio = 1 - oneHopRatio - twoHopsRatio;
 }
 
 
@@ -114,4 +133,19 @@ void MonoOS::switchApp(unsigned int coreIndex) {
         readyQueue->enque(app);
     }
     core->loadApp(readyQueue->deque());
+}
+
+
+int MonoOS::getCoherencyCost(int requestSrc, int dest) {
+    if(dest == -1) { //from memory
+        //
+    }
+
+    if(dest == -2) { //invalidation
+        //
+    }
+    double p = rand() % 100 / (double)100;
+    if(p <= inDieRatio) return coherencyRequestTicksInDie;
+    else if(p <= inDieRatio + oneHopRatio) return coherencyRequestTicksOneHop;
+    else return coherencyRequestTicksTwoHops;
 }

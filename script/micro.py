@@ -3,7 +3,7 @@ import os
 from subprocess import call
 import re
 
-nCores = [8, 16, 32, 64, 128]
+nCores = [8, 16, 32, 64]
 nSets = [1, 2, 4, 8]
 nServices = 4   #except NS
 

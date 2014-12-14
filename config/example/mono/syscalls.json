@@ -20,15 +20,15 @@
             "name": "t2",
             "ticks": {
                 "normal": 500,
-                "lock": 150
+                "lock": 50
             }
         },
 
         {
             "name": "t3", 
             "ticks": {
-                "normal": 0,
-                "lock": 200
+                "normal": 100,
+                "lock": 100
             }
         }
     ]

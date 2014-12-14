@@ -14,5 +14,12 @@ public:
     void switchApp(unsigned int coreIndex);
 private:
     void setOsSpecificSpecs(std::string osSpecificSpecs);
+    int getCoherencyCost(int requestSrc, int dest);
     unsigned int coherencyRequestTicks;
+    unsigned int coherencyRequestTicksInDie,
+              coherencyRequestTicksOneHop,
+              coherencyRequestTicksTwoHops;
+    double inDieRatio, 
+           oneHopRatio,
+           twoHopsRatio;
 };
