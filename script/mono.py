@@ -3,8 +3,8 @@ import os
 from subprocess import call
 import re
 
-nCores = [2, 4, 8, 16, 32, 64, 128, 256, 512]
-baseLatency = [0, 2, 5, 10, 20, 50]
+nCores = [2, 4, 8, 16]
+baseLatency = [2, 10]
 oneHopWeight = 2
 twoHopWeight = 2.5
 
@@ -42,6 +42,10 @@ with open(outFilePath+"/result.out", "w") as resultFile:
             replacement = r'\1: "mono",'
             cfg = re.sub(pat, replacement, cfg)
 
+            pat = r'("maxTick"): (.+)'
+            replacement = r'\1: 100000,'
+            cfg = re.sub(pat, replacement, cfg)
+
             tempCfgFile.write(cfg)
 
 
@@ -71,6 +75,8 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                 data.append((n, i, appsProcessed))
             resultFile.write('\n')
 
+            call(["rm", outFilePath+"/sim_logs/result_%d_cores_baseLatency_%d.txt" % (n, i)])
+
 with open("data_plot.dat", "w") as plotData:
     plotData.write("%s %s\n" % ("baseLatency", "proccessed"))
     for line in data:
@@ -86,7 +92,7 @@ set output "plot.png"
 lastx = NaN; lasty = NaN
 plot """)
     for i in baseLatency:
-        commands.write('"data_plot.dat" u ($2==%d?($1, lastx=$1):lastx):($2==%d?($3, lasty=$3):lasty) title "baseLatency=%d" with linespoints' % (i, i, i))
+        commands.write('"data_plot.dat" u ($2==%d?($1, lastx=$1):lastx):($2==%d?($3, lasty=$3):lasty) title "baseLatency=%d:%d:%d" with linespoints' % (i, i, i, i*oneHopWeight, i*twoHopWeight))
         if i != baseLatency[-1]:
             commands.write(',lastx=NaN, lasty=NaN\\')
         commands.write('\n')

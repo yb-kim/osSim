@@ -30,13 +30,16 @@ void MicroOS::init() {
     for(int i=0; i<nApps; i++) {
         readyQueue->enque(factory->createApp());
     }
-    //TODO: set core 0 as NS
-    env->getCore(0)->loadApp(new NSServiceApplication(this));
-    //TODO: set os service cores
+    //set core 0 as NS
+    //env->getCore(0)->loadApp(new NSServiceApplication(this));
+    for(int i=0; i<nSet; i++) {
+        env->getCore(i)->loadApp(new NSServiceApplication(this));
+    }
+    //set os service cores
     cout << "nSet = " << nSet << endl;
     for(int i=0; i<nSet; i++) {
         for(int j=1; j<nServices; j++) {
-            int index = (nServices-1)*i+j;
+            int index = nSet-1+(nServices-1)*i+j;
             cout << "loading " << getServiceTypeString(services[j]->type) << 
                 " service on core " << index << endl;
             env->getCore(index)->loadApp(
@@ -44,7 +47,7 @@ void MicroOS::init() {
             services[j]->runningCoreIndex.push_back(index);
         }
     }
-    for(int i=nSet*(nServices-1)+1; i<env->getNCores(); i++) { //Exclude NS in nServices
+    for(int i=nSet*(nServices-1)+nSet; i<env->getNCores(); i++) { //Exclude NS in nServices
         env->getCore(i)->loadApp(
                 readyQueue->deque());
     }
@@ -131,12 +134,12 @@ void MicroOS::getRequest(Request *req) {
 }
 
 int MicroOS::getIpcTicks(Request *req) {
-    switch(rand()%3) {
-    case 0:
+    switch(rand()%10) {
+    case 0: case 1: case 2: case 3: case 4: case 5:
         return ipcCost_die;
-    case 1:
+    case 6: case 7: case 8:
         return ipcCost_hop;
-    case 2:
+    case 9:
         return ipcCost_2hops;
     default:
         return ipcCost_die;

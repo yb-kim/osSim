@@ -7,6 +7,7 @@ MicroApplication::MicroApplication(int appSpecIndex) : Application(appSpecIndex)
     remainingTicks = 0;
     state = NORMAL;
     nsExpiration = 0;
+    nsCoreIndex = 0;
     nsCache = new unsigned int[MicroOS::nServices];
     for(int i=0; i<MicroOS::nServices; i++) nsCache[i] = 0;
     if(appSpecIndex >= 0) setPC(syscallPointer);
@@ -76,8 +77,8 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
     sequence->push_back(coreIndex); //sender
     if(nsExpiration <= 0) {
         cout << "NS cache expired" << endl;
-        sequence->push_back(0);
-        dest = (MicroServiceApplication *)os->getEnv()->getCore(0)->getAppRunning();
+        sequence->push_back(nsCoreIndex);
+        dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCoreIndex)->getAppRunning();
     } else {
         unsigned int nServices = pc.spec->getNServices();
         for(int i=0; i<nServices; i++) {

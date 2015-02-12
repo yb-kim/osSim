@@ -7,8 +7,11 @@ public:
     MicroAppFactory();
     Application* createApp();
     void setOS(MicroOS *_os) { os = _os; }
+    void init();
 
 private:
     MicroOS *os;
+    int getNsCoreIndex();
+    int nextNsCoreIndex;
     //
 };

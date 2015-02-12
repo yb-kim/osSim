@@ -2,33 +2,33 @@
     "services": [
         {
             "name": "NS",
-            "ticks": 40
+            "ticks": 10
         },
 
         {
             "name": "PM",
-            "ticks": 400
+            "ticks": 40
         },
 
         {
             "name": "FM",
-            "ticks": 400
+            "ticks": 40
         },
         {
             "name": "DISKIO",
-            "ticks": 400
+            "ticks": 40
         },
         {
             "name": "NETIO",
-            "ticks": 400
+            "ticks": 40
         }
     ],
 
-    "nSet": 1,
+    "nSet": 2,
     
-    "nsCacheExpiration": 100000,
+    "nsCacheExpiration": 10000,
 
-    "ipcCost_die": 21,
-    "ipcCost_hop": 91,
-    "ipcCost_2hops": 116
+    "ipcCost_die": 2,
+    "ipcCost_hop": 9,
+    "ipcCost_2hops": 11
 }
