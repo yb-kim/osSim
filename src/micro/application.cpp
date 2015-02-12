@@ -165,7 +165,7 @@ void MicroServiceApplication::run(unsigned int unitTick) {
             os->getRequest(req);
             requestQueue.pop();
         }
-    } while(!requestQueue.empty() && remainingTicks > 0);
+    } while(!requestQueue.empty() && remainingTicks > 0 && unitTick > 0);
 
     return;
 }
