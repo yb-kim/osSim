@@ -33,8 +33,8 @@ void MonoApplication::run(unsigned int unitTick) {
         return;
     }
     unsigned int remaining = unitTick;
-    if(unitTick > 0) {
-        remaining = processNormalTicks(unitTick);
+    if(remaining > 0) {
+        remaining = processNormalTicks(remaining);
     }
     if(remaining > 0) {
         remaining = processLockTicks(remaining);
@@ -98,6 +98,12 @@ bool MonoApplication::getLock(int specIndex) {
     MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *)getCurrentSyscallSpec();
     Bus *bus = menv->getBus();
 
+    if(Syscall::isTakingLock(specIndex, this)) {
+        //if the application already got the lock, 
+        //don't need to check again
+        return true;
+    }
+
     //read cache line
     switch(cacheState) {
     case MonoCore::MODIFIED:
@@ -125,7 +131,6 @@ bool MonoApplication::getLock(int specIndex) {
         state = WAITING_COHERENCY_REQUEST;
         cout << "waiting the cache block is coming..." << endl;
         return false;
-        break;
 
     default:
         break;

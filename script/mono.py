@@ -3,10 +3,12 @@ import os
 from subprocess import call
 import re
 
-nCores = [2, 4, 8, 16]
-baseLatency = [2, 10]
-oneHopWeight = 2
-twoHopWeight = 2.5
+nCores = [2, 4, 8, 16, 32, 64, 128]
+baseLatency = [2, 5, 10, 20]
+oneHopWeight = 1
+twoHopWeight = 1
+#oneHopWeight = 2
+#twoHopWeight = 2.5
 
 configFilePath = '/home/ybkim/workspace/osSim/config/example'
 outFilePath = './out'
@@ -61,7 +63,7 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                 pattern = r'("coherencyRequestTicksOneHop"): (\d*)'
                 appsConfig = re.sub(pattern, '"coherencyRequestTicksOneHop": '+str(i*oneHopWeight), appsConfig)
                 pattern = r'("coherencyRequestTicksTwoHops"): (\d*)'
-                appsConfig = re.sub(pattern, '"coherencyRequestTicksTwoHops": '+str(int(i*2.5)), appsConfig)
+                appsConfig = re.sub(pattern, '"coherencyRequestTicksTwoHops": '+str(int(i*twoHopWeight)), appsConfig)
                 appsFile.write(appsConfig)
                 appsFile.close()
                 resultFile.write("simulating with nCores = %d, baseLatency = %d\n" % (n, i))

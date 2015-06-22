@@ -4,12 +4,12 @@
     "os": {
         "maxTick": 10000,
         "unitTick": 30,
-        "contextSwitchTick": 5000,
-        "nApps": 64
+        "contextSwitchTick": 1000,
+        "nApps": 16
     },
 
     "env": {
-        "nCores": 7
+        "nCores": 8
     },
 
     "appQueue": {

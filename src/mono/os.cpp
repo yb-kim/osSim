@@ -58,8 +58,8 @@ void MonoOS::afterExecute() {
         cout << "processing request: " << req->getDescription() << endl;
         for(unsigned int i=0; i<env->getNCores(); i++) {
             MonoCore *srcCore = req->src;
-            Core *core = env->getCore(i);
-            MonoApplication *app = (MonoApplication *)(core->getAppRunning());
+            Core *targetCore = env->getCore(i);
+            MonoApplication *app = (MonoApplication *)(targetCore->getAppRunning());
             processed = app->snoopBus(req);
             if(processed) {
                 int cost = getCoherencyCost(req->src->getIndex(), i);
@@ -69,11 +69,14 @@ void MonoOS::afterExecute() {
             }
         }
 
+        //If the request is successfully snooped, try process next request
         if(processed) continue;
         
-        //If no core can process request (must be handled by memory)
+        //If no core can process request 
+        //(must be handled by memory or the request is invalidation)
         unsigned int syscallIndex = req->syscallIndex;
         int cost;
+        MonoApplication *app = (MonoApplication *)req->src->getAppRunning();
         switch(req->requestType) {
         case CoherencyRequest::READ: 
             cout << "request is processed by memory "
@@ -86,12 +89,12 @@ void MonoOS::afterExecute() {
 
         case CoherencyRequest::INVALIDATION:
             req->src->setCacheState(syscallIndex, MonoCore::MODIFIED);
+            Syscall::getLock(syscallIndex, app);
             cost = getCoherencyCost(req->src->getIndex(), -2);
             remainingTicks -= cost;
             cout << "coherency Request consumes " << cost << " ticks" << endl;
             break;
         }
-        MonoApplication *app = (MonoApplication *)req->src->getAppRunning();
         app->setState(MonoApplication::NORMAL);
 
     }
