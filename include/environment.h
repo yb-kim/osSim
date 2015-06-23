@@ -17,8 +17,20 @@ public:
     int getNCores() { return nCores; }
     Core** getCores() { return cores; }
     Core* getCore(int n) { return cores[n]; }
+    int getMessageCost(int src, int dest) {
+        return (this->*costFunction)(src, dest); 
+    }
+
+    typedef enum {
+        RING
+    } Topology;
 protected:
     int nCores;
     Core **cores;
     OS *os;
+    Topology topology;
+    unsigned int baseLatency;
+
+    int (Environment::*costFunction) (int src, int dest);
+    int getMessageCost_RING(int src, int dest);
 };

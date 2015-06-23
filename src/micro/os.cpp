@@ -134,16 +134,8 @@ void MicroOS::getRequest(Request *req) {
 }
 
 int MicroOS::getIpcTicks(Request *req) {
-    switch(rand()%10) {
-    case 0: case 1: case 2: case 3: case 4: case 5:
-        return ipcCost_die;
-    case 6: case 7: case 8:
-        return ipcCost_hop;
-    case 9:
-        return ipcCost_2hops;
-    default:
-        return ipcCost_die;
-    }
+    return env->getMessageCost(
+            req->src->getCoreIndex(), req->dest->getCoreIndex());
 }
 
 void MicroOS::sendRequest(Request *req) {

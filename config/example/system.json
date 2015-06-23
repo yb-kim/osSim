@@ -9,7 +9,9 @@
     },
 
     "env": {
-        "nCores": 8
+        "nCores": 16,
+        "topology": "RING",
+        "baseLatency": 2
     },
 
     "appQueue": {

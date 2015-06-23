@@ -54,9 +54,13 @@ class EnvConfig {
 public:
     EnvConfig(rapidjson::Value& params);
     unsigned int getNCores() { return nCores; }
+    std::string getTopology() { return topology; }
+    unsigned int getBaseLatency() { return baseLatency; }
 
 private:
     unsigned int nCores;
+    unsigned int baseLatency;
+    std::string topology;
 };
 
 

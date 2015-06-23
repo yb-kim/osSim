@@ -147,8 +147,5 @@ int MonoOS::getCoherencyCost(int requestSrc, int dest) {
     if(dest == -2) { //invalidation
         //
     }
-    double p = rand() % 100 / (double)100;
-    if(p <= inDieRatio) return coherencyRequestTicksInDie;
-    else if(p <= inDieRatio + oneHopRatio) return coherencyRequestTicksOneHop;
-    else return coherencyRequestTicksTwoHops;
+    return (env->getMessageCost(requestSrc, dest));
 }
