@@ -29,7 +29,7 @@ public:
         unsigned int lockTicks;
     } pc;
 
-private:
+protected:
     unsigned int processNormalTicks(unsigned int tick); //returns ticks remaining
     unsigned int processLockTicks(unsigned int tick);
     bool getLock(int specIndex);

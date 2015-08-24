@@ -18,6 +18,11 @@ int MicroOS::nServices;
 
 
 MicroOS::MicroOS(Config *cfg) : OS(cfg) {
+    string osTypeString = "micro";
+    syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
+    osSpecificSpecs = configFileRoot+osTypeString+"/system.json";
+    appSpecs = configFileRoot+"/apps.json";
+
     setOsSpecificSpecs(osSpecificSpecs);
     env = new MicroEnvironment(cfg->getEnvConfig());
     factory = new MicroAppFactory();

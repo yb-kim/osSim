@@ -8,13 +8,14 @@ class MonoEnvironment;
 class MonoOS : public OS {
 public:
     MonoOS(Config *cfg);
-    void init();
+    virtual void init();
     void checkAndDoSchedule();
     void afterExecute();
     void switchApp(unsigned int coreIndex);
-private:
+protected:
     void setOsSpecificSpecs(std::string osSpecificSpecs);
     int getCoherencyCost(int requestSrc, int dest);
+    void makeAppFactory();
     unsigned int coherencyRequestTicks;
     unsigned int coherencyRequestTicksInDie,
               coherencyRequestTicksOneHop,

@@ -15,6 +15,9 @@ public:
     virtual void checkAndDoSchedule() = 0;
     virtual void afterExecute() = 0;
     virtual void wrapUp();
+    virtual void executeCores();
+
+    void increaseCurTick(int unitTick) { curTick += unitTick; }
 
     Environment* getEnv() { return env; }
 

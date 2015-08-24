@@ -13,7 +13,7 @@ for root, dirs, files in os.walk(here):
     if 'SConscript' in files:
         SConscript(os.path.join(root, 'SConscript'), duplicate=0)
         Import('dirSources')
-        path = os.path.basename(os.path.abspath(root))
+        path = os.path.abspath(root).replace(here, '')[1:]
         dirSources = map(lambda x: path+'/'+x, dirSources)
         srcs += dirSources
 

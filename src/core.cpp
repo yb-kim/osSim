@@ -7,13 +7,13 @@ Core::Core():
 }
 
 Core::Core(unsigned int index):
-    index(index)
+    index(index), appRunning(NULL)
 {
     //
 }
 
 Core::Core(unsigned int index, Environment *env):
-    index(index), env(env)
+    index(index), env(env), appRunning(NULL)
 {
     //
 }
@@ -25,5 +25,6 @@ void Core::loadApp(Application *app) {
 }
 
 void Core::run(unsigned int unitTick) {
+    if(appRunning == NULL) return;
     appRunning->run(unitTick);
 }

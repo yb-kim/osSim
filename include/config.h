@@ -11,7 +11,7 @@ class Config {
 public:
     Config(std::string configFile);
 
-    enum OSType { NONE, MONO, MICRO };
+    enum OSType { NONE, MONO, MICRO, TYPE_A };
 
     std::string getConfigFileRoot() { return configFileRoot; }
     OsConfig* getOsConfig() { return osConfig; }

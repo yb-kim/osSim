@@ -34,14 +34,9 @@ OS::OS(Config *cfg) :
 void OS::run() {
     init();
     while(curTick <= maxTick) {
-        cout << endl << endl << "<<Tick: " << curTick << ">>" << endl;
         checkAndDoSchedule();
-        for(int i=0; i<env->getNCores(); i++) {
-            cout << "------------------" << endl;
-            cout << "execute core " << env->getCore(i)->getIndex() << "..." << endl;
-            executeCore(i, unitTick);
-        }
-        curTick += unitTick;
+        executeCores();
+        increaseCurTick(unitTick);
         afterExecute();
     }
     wrapUp();
@@ -62,4 +57,14 @@ void OS::executeCore(unsigned int n, unsigned int unitTick) {
 void OS::wrapUp() {
     cout << "total apps processed: " << nAppsFinished << endl;
     return;
+}
+
+
+void OS::executeCores() {
+    cout << endl << endl << "<<Tick: " << curTick << ">>" << endl;
+    for(int i=0; i<env->getNCores(); i++) {
+        cout << "------------------" << endl;
+        cout << "execute core " << env->getCore(i)->getIndex() << "..." << endl;
+        executeCore(i, unitTick);
+    }
 }

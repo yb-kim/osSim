@@ -11,9 +11,14 @@ using namespace std;
 using namespace rapidjson;
 
 MonoOS::MonoOS(Config *cfg) : OS(cfg) {
+    string osTypeString = "mono";
+    syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
+    osSpecificSpecs = configFileRoot+osTypeString+"/system.json";
+    appSpecs = configFileRoot+"/apps.json";
+
     Syscall::setMonoSyscalls(syscallSpecs);
     env = new MonoEnvironment(cfg->getEnvConfig(), this);
-    factory = new MonoAppFactory();
+    makeAppFactory();
     setOsSpecificSpecs(osSpecificSpecs);
 }
 
@@ -148,4 +153,9 @@ int MonoOS::getCoherencyCost(int requestSrc, int dest) {
         //
     }
     return (env->getMessageCost(requestSrc, dest));
+}
+
+
+void MonoOS::makeAppFactory() {
+    factory = new MonoAppFactory();
 }

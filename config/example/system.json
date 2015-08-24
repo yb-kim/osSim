@@ -1,5 +1,5 @@
 {
-    "osType": "mono",
+    "osType": "type_a",
 
     "os": {
         "maxTick": 10000,
@@ -9,7 +9,7 @@
     },
 
     "env": {
-        "nCores": 16,
+        "nCores": 8,
         "topology": "RING",
         "baseLatency": 2
     },

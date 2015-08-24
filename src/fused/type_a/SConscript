@@ -1,0 +1,4 @@
+dirSources = ['os.cpp', 'micro.cpp', 'mono.cpp', 
+              'monoAppFactory.cpp', 'monoApplication.cpp']
+
+Export('dirSources')
