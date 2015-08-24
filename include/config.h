@@ -56,11 +56,17 @@ public:
     unsigned int getNCores() { return nCores; }
     std::string getTopology() { return topology; }
     unsigned int getBaseLatency() { return baseLatency; }
+    unsigned int getStartCoreIndex() { return startCoreIndex; }
+
+    void setStartCoreIndex(unsigned int i) { startCoreIndex = i; }
+
+    void setNCores(int n) { nCores = n; }
 
 private:
     unsigned int nCores;
     unsigned int baseLatency;
     std::string topology;
+    unsigned int startCoreIndex;
 };
 
 

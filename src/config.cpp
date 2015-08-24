@@ -45,6 +45,7 @@ EnvConfig::EnvConfig(Value& params) {
     nCores = params["nCores"].GetInt();
     topology = params["topology"].GetString();
     baseLatency = params["baseLatency"].GetInt();
+    startCoreIndex = 0;
 }
 
 

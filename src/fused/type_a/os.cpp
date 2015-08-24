@@ -9,13 +9,18 @@ using namespace rapidjson;
 
 FusedOSTypeA::FusedOSTypeA(Config *cfg) : OS(cfg) {
     setOsSpecificSpecs(osSpecificSpecs);
+    unsigned int totalCores = cfg->getEnvConfig()->getNCores();
+    cfg->getEnvConfig()->setNCores(nMonoCores);
     monoOS = new MonoOSTypeA(cfg);
+    cfg->getEnvConfig()->setNCores(totalCores-nMonoCores);
+    cfg->getEnvConfig()->setStartCoreIndex(nMonoCores);
     microOS = new MicroOSTypeA(cfg);
     return;
 }
 
 void FusedOSTypeA::init() {
     //OS::init();
+    microOS->init();
 }
 
 void FusedOSTypeA::checkAndDoSchedule() {

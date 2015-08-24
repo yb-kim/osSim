@@ -18,6 +18,14 @@ Core::Core(unsigned int index, Environment *env):
     //
 }
 
+Core::Core(unsigned int index, unsigned int printingCoreIndex,
+        Environment *env):
+    index(index), printingCoreIndex(printingCoreIndex),
+    env(env), appRunning(NULL)
+{
+    //
+}
+
 void Core::loadApp(Application *app) {
     appRunning = app;
     app->setCoreIndex(index);

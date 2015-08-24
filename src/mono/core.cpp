@@ -8,6 +8,7 @@ MonoCore::MonoCore(unsigned int index,
         Environment *env,
         unsigned int nSyscalls): Core(index, env) 
 {
+    printingCoreIndex = index;
     cacheStates = new CacheState[nSyscalls];
     for(int i=0; i<nSyscalls; i++) {
         cacheStates[i] = INVALID;
