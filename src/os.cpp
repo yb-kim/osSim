@@ -64,7 +64,7 @@ void OS::executeCores() {
     cout << endl << endl << "<<Tick: " << curTick << ">>" << endl;
     for(int i=0; i<env->getNCores(); i++) {
         cout << "------------------" << endl;
-        cout << "execute core " << env->getCore(i)->getIndex() << "..." << endl;
+        cout << "execute core " << env->getCore(i)->getPrintingIndex() << "..." << endl;
         executeCore(i, unitTick);
     }
 }
