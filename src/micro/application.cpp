@@ -16,16 +16,9 @@ MicroApplication::MicroApplication(int appSpecIndex) : Application(appSpecIndex)
 void MicroApplication::run(unsigned int unitTick) {
     remainingTicks = unitTick;
     cout << "enter run()" << endl;
-    cout << "Syscalls: ";
-    for(int i=0; i<spec->getNSyscalls(); i++) {
-        int *syscallIndex = spec->getSyscallIndex();
-        MicroSyscallSpec *syscallSpec = (MicroSyscallSpec *)
-            Syscall::getSyscallSpec(syscallIndex[i]);
-        cout << syscallSpec->getName();
-        if(syscallPointer == i) cout << "(*)";
-        cout << " -> ";
-    }
-    cout << "TERMINATE" << endl;
+
+    printSyscallStatus();
+
     if(state==WAITING || state==WAITING_NS) {
         cout << "Waiting ipc result..." << endl;
         int processed = processNormalTicks(unitTick);
@@ -33,12 +26,10 @@ void MicroApplication::run(unsigned int unitTick) {
             " (" << pc.normalTicks << " ticks remaining)" << endl;
         return;
     }
+
     //process ipc
-    unsigned int nServices = pc.spec->getNServices();
-    if(pc.serviceIndex <= nServices-1) {
-        ipc(pc.spec->getServiceType(pc.serviceIndex));
-        return;
-    }
+    doIpc();
+
     //process normal ticks
     int processed = processNormalTicks(unitTick);
     cout << "normal tick processed: " << processed <<
@@ -193,4 +184,27 @@ int NSServiceApplication::getServiceCoreIndex(MicroOS::ServiceType type) {
         indexCounter[index]++;
     }
     return result;
+}
+
+
+void MicroApplication::printSyscallStatus() {
+    cout << "Syscalls: ";
+    for(int i=0; i<spec->getNSyscalls(); i++) {
+        int *syscallIndex = spec->getSyscallIndex();
+        MicroSyscallSpec *syscallSpec = (MicroSyscallSpec *)
+            Syscall::getSyscallSpec(syscallIndex[i]);
+        cout << syscallSpec->getName();
+        if(syscallPointer == i) cout << "(*)";
+        cout << " -> ";
+    }
+    cout << "TERMINATE" << endl;
+}
+
+
+void MicroApplication::doIpc() {
+    unsigned int nServices = pc.spec->getNServices();
+    if(pc.serviceIndex <= nServices-1) {
+        ipc(pc.spec->getServiceType(pc.serviceIndex));
+        return;
+    }
 }

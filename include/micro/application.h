@@ -49,6 +49,8 @@ protected:
     void setPC(unsigned int syscallIndex);
     void sendRequest(Request *req);
     unsigned int processNormalTicks(unsigned int ticks);
+    void printSyscallStatus();
+    virtual void doIpc();
     
     int remainingTicks;
     bool isSyscallFinished();

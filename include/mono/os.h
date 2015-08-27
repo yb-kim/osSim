@@ -15,7 +15,7 @@ public:
 protected:
     void setOsSpecificSpecs(std::string osSpecificSpecs);
     int getCoherencyCost(int requestSrc, int dest);
-    void makeAppFactory();
+    virtual void makeAppFactory();
     unsigned int coherencyRequestTicks;
     unsigned int coherencyRequestTicksInDie,
               coherencyRequestTicksOneHop,

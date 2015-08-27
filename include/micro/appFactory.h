@@ -9,7 +9,7 @@ public:
     void setOS(MicroOS *_os) { os = _os; }
     void init();
 
-private:
+protected:
     MicroOS *os;
     int getNsCoreIndex();
     int nextNsCoreIndex;

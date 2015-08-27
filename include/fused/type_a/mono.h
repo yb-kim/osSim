@@ -7,5 +7,6 @@ public:
     MonoOSTypeA(Config *cfg);
     void checkAndDoSchedule();
     void init();
+    void makeAppFactory();
     //
 };

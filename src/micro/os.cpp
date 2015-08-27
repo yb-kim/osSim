@@ -25,7 +25,7 @@ MicroOS::MicroOS(Config *cfg) : OS(cfg) {
 
     setOsSpecificSpecs(osSpecificSpecs);
     env = new MicroEnvironment(cfg->getEnvConfig());
-    factory = new MicroAppFactory();
+    makeAppFactory();
     Syscall::setMicroSyscalls(syscallSpecs);
 }
 
@@ -181,4 +181,8 @@ void MicroOS::sendRequest(Request *req) {
         }
         delete req;
     }
+}
+
+void MicroOS::makeAppFactory() {
+    factory = new MicroAppFactory();
 }

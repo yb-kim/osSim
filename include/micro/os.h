@@ -69,11 +69,12 @@ public:
     static Service* getService(ServiceType serviceType);
 
     void getRequest(Request *req);
-private:
+protected:
     std::list< RequestEntry * > waitingRequests;
     void setOsSpecificSpecs(std::string osSpecificSpecs);
     int getIpcTicks(Request *req);
     void sendRequest(Request *req);
+    virtual void makeAppFactory();
 
     unsigned int nsCacheExpiration;
     unsigned int ipcCost_die, ipcCost_hop, ipcCost_2hops;
