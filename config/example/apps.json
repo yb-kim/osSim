@@ -2,17 +2,7 @@
     "types": [
         {
             "type": "normal",
-            "syscalls": [3, 2, 0, 1]
-        },
-        {
-            "type": "normal",
-            "syscalls": [0, 2, 3, 3, 2]
-        },
-        {
-            "type": "normal",
-            "syscalls": [1, 2, 1, 0, 0, 3]
+            "workload": ["s1", "s0"]
         }
-    ],
-        
-    "workloads": [0, 1, 2]
+    ]
 }

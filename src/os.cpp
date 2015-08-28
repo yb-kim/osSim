@@ -25,7 +25,7 @@ OS::OS(Config *cfg) :
     //appSpecs = configFileRoot+osTypeString+"/apps.json";
     appSpecs = configFileRoot+"/apps.json";
 
-    Application::setApplications(appSpecs);
+    //Application::setApplications(appSpecs);
 
     srand(time(NULL));
 

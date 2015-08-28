@@ -14,6 +14,7 @@ SyscallSpec** Syscall::syscalls;
 Application** Syscall::locks;
 Document* Syscall::specConfig;
 unsigned int Syscall::nSpecs;
+Syscall::SyscallNameIndexPair* Syscall::syscallNameIndexPairs;
 
 SyscallSpec* Syscall::getSyscallSpec(unsigned int n) {
     return syscalls[n];
@@ -37,12 +38,27 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
     //Initialize each syscalls
     nSpecs = (*specConfig)["types"].Size();
     syscalls = (SyscallSpec **)new MonoSyscallSpec*[nSpecs];
+    Syscall::syscallNameIndexPairs = new SyscallNameIndexPair[nSpecs];
     for(SizeType i=0; i<nSpecs; i++) {
-        Value& ticks = (*specConfig)["types"][i]["ticks"];
-        unsigned int normalTicks = ticks["normal"].GetInt();
-        unsigned int lockTicks = ticks["lock"].GetInt();
+        Value& workloadParams = (*specConfig)["types"][i]["workload"];
+        SizeType nWorkloads = workloadParams.Size();
         string name = (*specConfig)["types"][i]["name"].GetString();
-        syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks, name, i);
+        MonoSyscallSpec::SyscallWorkload *workloads = 
+            new MonoSyscallSpec::SyscallWorkload[nWorkloads];
+        for(SizeType j=0; j<nWorkloads; j++) {
+            MonoSyscallSpec::SyscallWorkload workload = workloads[j];
+            string workloadType = workloadParams[j]["type"].GetString();
+            if(workloadType == "normal")
+                workload.type = MonoSyscallSpec::NORMAL;
+            else
+                workload.type = MonoSyscallSpec::LOCK;
+            unsigned int tick = workloadParams[j]["tick"].GetInt();
+            workload.tick = tick;
+        }
+        //syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks, name, i);
+        syscalls[i] = new MonoSyscallSpec(workloads, name, i);
+        Syscall::syscallNameIndexPairs[i].name = name;
+        Syscall::syscallNameIndexPairs[i].index = i;
     }
 
     //Initialize locks
@@ -55,6 +71,7 @@ void Syscall::setMicroSyscalls(string syscallSpecs) {
 
     SizeType nSpecs = (*specConfig)["types"].Size();
     syscalls = (SyscallSpec **)new MicroSyscallSpec*[nSpecs];
+    Syscall::syscallNameIndexPairs = new SyscallNameIndexPair[nSpecs];
     for(SizeType i=0; i<nSpecs; i++) {
         Value& syscallConfig = (*specConfig)["types"][i];
         unsigned int normalTicks = syscallConfig["normalTicks"].GetInt();
@@ -66,6 +83,8 @@ void Syscall::setMicroSyscalls(string syscallSpecs) {
             services[j] = MicroOS::getServiceType(serviceType);
         }
         syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices, name, i);
+        Syscall::syscallNameIndexPairs[i].name = name;
+        Syscall::syscallNameIndexPairs[i].index = i;
     }
 }
 
@@ -92,4 +111,14 @@ bool Syscall::checkLock(unsigned int syscallNum, Application *app) {
 
 bool Syscall::isTakingLock(unsigned int syscallNum, Application *app) {
     return locks[syscallNum]==app;
+}
+
+
+int Syscall::getSyscallIndexByName(string syscallName) {
+    for(int i=0; i<Syscall::nSpecs; i++) {
+        cout << "syscallNameIndexPair: " << syscallNameIndexPairs[i].name << ", " << syscallNameIndexPairs[i].index << endl;
+        if(Syscall::syscallNameIndexPairs[i].name == syscallName) 
+            return syscallNameIndexPairs[i].index;
+    }
+    return -1;
 }

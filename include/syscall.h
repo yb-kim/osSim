@@ -18,7 +18,12 @@ public:
 
     static void setMonoSyscalls(std::string syscallSpecs);
     static void setMicroSyscalls(std::string syscallSpecs);
+    static int getSyscallIndexByName(std::string syscallName);
     static unsigned int getNSpecs() { return nSpecs; }
+    typedef struct syscallNameIndexPair {
+        std::string name;
+        unsigned int index;
+    } SyscallNameIndexPair;
 
 private:
     Syscall() { }
@@ -27,6 +32,8 @@ private:
     static Application **locks;
     static rapidjson::Document* specConfig;
     static unsigned int nSpecs;
+
+    static SyscallNameIndexPair *syscallNameIndexPairs;
 };
 
 

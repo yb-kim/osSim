@@ -17,16 +17,18 @@ int MicroOS::nSet;
 int MicroOS::nServices;
 
 
-MicroOS::MicroOS(Config *cfg) : OS(cfg) {
-    string osTypeString = "micro";
-    syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
-    osSpecificSpecs = configFileRoot+osTypeString+"/system.json";
+MicroOS::MicroOS(Config *cfg, bool initialize) : OS(cfg) {
+    if(initialize) {
+        string osTypeString = "micro";
+        syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
+        osSpecificSpecs = configFileRoot+osTypeString+"/system.json";
+        setOsSpecificSpecs(osSpecificSpecs);
+        makeAppFactory();
+        Syscall::setMicroSyscalls(syscallSpecs);
+        Application::setApplications(appSpecs);
+    }
     appSpecs = configFileRoot+"/apps.json";
-
-    setOsSpecificSpecs(osSpecificSpecs);
     env = new MicroEnvironment(cfg->getEnvConfig());
-    makeAppFactory();
-    Syscall::setMicroSyscalls(syscallSpecs);
 }
 
 void MicroOS::init() {

@@ -54,10 +54,22 @@ void Application::setApplications(std::string appSpecConfig) {
             //default
             type = ApplicationSpec::NORMAL;
         }
-        Value& syscalls = (*specConfig)["types"][i]["syscalls"];
+        Value& syscalls = (*specConfig)["types"][i]["workload"];
         SizeType nSyscalls = syscalls.Size();
         int *syscallIndex = new int[nSyscalls];
-        for(SizeType j=0; j<nSyscalls; j++) syscallIndex[j] = syscalls[j].GetInt();
+        int currentSyscallIndex;
+        for(SizeType j=0; j<nSyscalls; j++) {
+            if(syscalls[j].IsString()) {
+                string syscallName = syscalls[j].GetString();
+                cout << "setApplications() meets syscall name: " << syscallName << endl;
+                currentSyscallIndex = Syscall::getSyscallIndexByName(syscallName);
+                cout << "syscall index is: " << currentSyscallIndex << endl;
+                syscallIndex[j] = currentSyscallIndex;
+            } else {
+                currentSyscallIndex = syscalls[j].GetInt();
+                syscallIndex[j] = -currentSyscallIndex;
+            }
+        }
         appSpecs[i] = new ApplicationSpec(type, syscallIndex, nSyscalls);
     }
 }

@@ -9,7 +9,7 @@ class Request;
 
 class MicroOS : public OS {
 public:
-    MicroOS(Config *cfg);
+    MicroOS(Config *cfg, bool initialize=true);
     void init();
     void checkAndDoSchedule();
     void afterExecute();

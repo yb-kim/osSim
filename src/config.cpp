@@ -51,8 +51,4 @@ EnvConfig::EnvConfig(Value& params) {
 
 AppQueueConfig::AppQueueConfig(Value& params) {
     string policyString = params["policy"].GetString();
-    Value& workloads = params["workloads"];
-    nWorkloads = workloads.Size();
-    workloadSequence = new int[nWorkloads];
-    for(SizeType i=0; i<nWorkloads; i++) workloadSequence[i] = workloads[i].GetInt();
 }

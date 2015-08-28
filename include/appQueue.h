@@ -25,7 +25,6 @@ public:
 protected:
     SchedulePolicy schedulePolicy;
     int nWorkloads;
-    int *workloadSequence;
     void *storage;
     void setPolicy(std::string policyString);
     Application* (AppQueue::*selectApp)(void);

@@ -4,8 +4,7 @@
 using namespace std;
 
 AppQueue::AppQueue(AppQueueConfig *config):
-    nWorkloads(config->getNWorkloads()),
-    workloadSequence(config->getWorkloadSequence())
+    nWorkloads(config->getNWorkloads())
 {
     string policyString = config->getSchedulePolicyString();
     setPolicy(policyString);
