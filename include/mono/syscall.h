@@ -26,16 +26,21 @@ public:
 
     MonoSyscallSpec(SyscallWorkload *syscallWorkloads,
             std::string name,
-            unsigned int index) :
-        syscallWorkloads(syscallWorkloads), name(name), SyscallSpec(0, 0, index)
+            unsigned int index,
+            unsigned int nSyscallWorkloads) :
+        syscallWorkloads(syscallWorkloads), name(name),
+        nSyscallWorkloads(nSyscallWorkloads), SyscallSpec(0, 0, index)
     {
         //
     }
 
     std::string getName() { return name; }
+    SyscallWorkload getSyscallWorkload(int i) { return syscallWorkloads[i]; }
+    unsigned int getNSyscallWorkloads() { return nSyscallWorkloads; }
 
 
 private:
     std::string name;
     SyscallWorkload *syscallWorkloads;
+    unsigned int nSyscallWorkloads;
 };

@@ -35,3 +35,10 @@ void AppQueue::enque(Application *app) {
     queue = (AppQueue::StorageType<Application *>::roundRobin *)storage;
     queue->push(app);
 }
+
+
+bool AppQueue::isEmpty() {
+    AppQueue::StorageType<Application *>::roundRobin *queue;
+    queue = (AppQueue::StorageType<Application *>::roundRobin *)storage;
+    return queue->empty();
+}

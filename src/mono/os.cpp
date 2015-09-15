@@ -64,13 +64,15 @@ void MonoOS::afterExecute() {
         for(unsigned int i=0; i<env->getNCores(); i++) {
             MonoCore *srcCore = req->src;
             Core *targetCore = env->getCore(i);
-            MonoApplication *app = (MonoApplication *)(targetCore->getAppRunning());
-            processed = app->snoopBus(req);
-            if(processed) {
-                int cost = getCoherencyCost(req->src->getIndex(), i);
-                remainingTicks -= cost;
-                cout << "coherency Request consumes " << cost << " ticks" << endl;
-                break;
+            if(targetCore->isBusy()) {
+                MonoApplication *app = (MonoApplication *)(targetCore->getAppRunning());
+                processed = app->snoopBus(req);
+                if(processed) {
+                    int cost = getCoherencyCost(req->src->getIndex(), i);
+                    remainingTicks -= cost;
+                    cout << "coherency Request consumes " << cost << " ticks" << endl;
+                    break;
+                }
             }
         }
 

@@ -21,6 +21,7 @@ public:
     AppQueue(AppQueueConfig *config);
     void enque(Application *app);
     Application* deque() { return (this->*selectApp)(); }
+    bool isEmpty();
 
 protected:
     SchedulePolicy schedulePolicy;

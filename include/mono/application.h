@@ -23,6 +23,8 @@ public:
     bool snoopBus(CoherencyRequest *req);
     State getState() { return state; }
     void setState(State s) { state = s; }
+    void setPC(unsigned int syscallIndex);
+    virtual void processFinish();
 
     struct PC {
         unsigned int normalTicks;
@@ -33,9 +35,13 @@ protected:
     unsigned int processNormalTicks(unsigned int tick); //returns ticks remaining
     unsigned int processLockTicks(unsigned int tick);
     bool getLock(int specIndex);
-    void setPC(unsigned int syscallIndex);
     bool isSyscallFinished();
+    bool isSyscallWorkloadFinished();
+    void moveToNextSyscallWorkload();
 
     State state;
+    unsigned int currentSyscallWorkloadIndex;
+    MonoSyscallSpec *currentSyscallSpec;
+    MonoSyscallSpec::SyscallWorkload currentSyscallWorkload;
     //
 };

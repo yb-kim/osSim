@@ -11,6 +11,7 @@ using namespace std;
 MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpecIndex) {
     setPC(syscallPointer);
     state = NORMAL;
+    currentSyscallWorkloadIndex = 0;
 }
 
 void MonoApplication::run(unsigned int unitTick) {
@@ -33,24 +34,30 @@ void MonoApplication::run(unsigned int unitTick) {
         return;
     }
     unsigned int remaining = unitTick;
+
     if(remaining > 0) {
-        remaining = processNormalTicks(remaining);
-    }
-    if(remaining > 0) {
-        remaining = processLockTicks(remaining);
-    }
-    if(remaining >= 0 && isSyscallFinished()) {
-        bool next = moveToNextSyscall();
-        if(!next) {
-            finished = true;
-            MonoEnvironment *menv = (MonoEnvironment *)env;
-            MonoOS *os = (MonoOS *)menv->getOS();
-            cout << "app #" << id << " finished" << endl;
-            cout << "switch to another app" << endl;
-            os->switchApp(coreIndex);
+        if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL) {
+            remaining = processNormalTicks(remaining);
+        } else {
+            remaining = processLockTicks(remaining);
         }
-        else run(remaining);
+
+        if(isSyscallFinished()) {
+            bool next = moveToNextSyscall();
+            if(!next) {
+                finished = true;
+                cout << "app #" << id << " finished" << endl;
+                processFinish();
+                return;
+            } else {
+                return run(remaining);
+            }
+        } else if(isSyscallWorkloadFinished())  {
+            moveToNextSyscallWorkload();
+            return run(remaining);
+        }
     }
+
 }
 
 unsigned int MonoApplication::processNormalTicks(unsigned int tick) {
@@ -82,14 +89,53 @@ void MonoApplication::freeLock() {
 }
 
 void MonoApplication::setPC(unsigned int syscallIndex) {
-    SyscallSpec *syscall = Syscall::getSyscallSpec(spec->getSyscallIndex()[syscallIndex]);
-    pc.normalTicks = syscall->getNormalTicks();
-    pc.lockTicks = syscall->getLockTicks();
+    currentSyscallSpec = (MonoSyscallSpec *)getCurrentSyscallSpec(syscallIndex);
+    currentSyscallWorkloadIndex = 0;
+    currentSyscallWorkload = currentSyscallSpec->getSyscallWorkload(
+            currentSyscallWorkloadIndex);
+    cout << "setting PC: syscall " << currentSyscallSpec->getName() <<", workload#" << 
+        currentSyscallWorkloadIndex << endl;
+    if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL) {
+        pc.normalTicks = currentSyscallWorkload.tick;
+        pc.lockTicks = 0;
+        cout << "type: NORMAL, tick: " << pc.normalTicks << endl;
+    } else {
+        pc.normalTicks = 0;
+        pc.lockTicks = currentSyscallWorkload.tick;
+        cout << "type: LOCK, tick: " << pc.lockTicks << endl;
+    }
 }
 
-bool MonoApplication::isSyscallFinished() {
-    return ((pc.normalTicks == 0) && (pc.lockTicks == 0));
+
+void MonoApplication::moveToNextSyscallWorkload() {
+    currentSyscallWorkloadIndex++;
+    currentSyscallWorkload = currentSyscallSpec->getSyscallWorkload(
+            currentSyscallWorkloadIndex);
+    cout << "setting PC: syscall#" << syscallPointer <<", workload#" << 
+        currentSyscallWorkloadIndex << endl;
+    if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL) {
+        pc.normalTicks = currentSyscallWorkload.tick;
+        pc.lockTicks = 0;
+        cout << "type: NORMAL, tick: " << pc.normalTicks << endl;
+    } else {
+        pc.normalTicks = 0;
+        pc.lockTicks = currentSyscallWorkload.tick;
+        cout << "type: LOCK, tick: " << pc.lockTicks << endl;
+    }
 }
+
+
+bool MonoApplication::isSyscallFinished() {
+    unsigned int nSyscallWorkloads = currentSyscallSpec->getNSyscallWorkloads();
+    return isSyscallWorkloadFinished() && 
+        currentSyscallWorkloadIndex == nSyscallWorkloads-1;
+}
+
+
+bool MonoApplication::isSyscallWorkloadFinished() {
+    return pc.normalTicks == 0 && pc.lockTicks == 0;
+}
+
 
 bool MonoApplication::getLock(int specIndex) {
     MonoEnvironment *menv = (MonoEnvironment *)env;
@@ -235,4 +281,12 @@ bool MonoApplication::snoopBus(CoherencyRequest *req) {
         //return false to deliver this request to next core
         return false;
     }
+}
+
+
+void MonoApplication::processFinish() {
+    MonoEnvironment *menv = (MonoEnvironment *)env;
+    MonoOS *os = (MonoOS *)menv->getOS();
+    cout << "switch to another app" << endl;
+    os->switchApp(coreIndex);
 }

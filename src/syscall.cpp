@@ -46,17 +46,17 @@ void Syscall::setMonoSyscalls(string syscallSpecs) {
         MonoSyscallSpec::SyscallWorkload *workloads = 
             new MonoSyscallSpec::SyscallWorkload[nWorkloads];
         for(SizeType j=0; j<nWorkloads; j++) {
-            MonoSyscallSpec::SyscallWorkload workload = workloads[j];
+            //MonoSyscallSpec::SyscallWorkload workload = workloads[j];
             string workloadType = workloadParams[j]["type"].GetString();
             if(workloadType == "normal")
-                workload.type = MonoSyscallSpec::NORMAL;
+                workloads[j].type = MonoSyscallSpec::NORMAL;
             else
-                workload.type = MonoSyscallSpec::LOCK;
+                workloads[j].type = MonoSyscallSpec::LOCK;
             unsigned int tick = workloadParams[j]["tick"].GetInt();
-            workload.tick = tick;
+            workloads[j].tick = tick;
         }
         //syscalls[i] = new MonoSyscallSpec(normalTicks, lockTicks, name, i);
-        syscalls[i] = new MonoSyscallSpec(workloads, name, i);
+        syscalls[i] = new MonoSyscallSpec(workloads, name, i, nWorkloads);
         Syscall::syscallNameIndexPairs[i].name = name;
         Syscall::syscallNameIndexPairs[i].index = i;
     }

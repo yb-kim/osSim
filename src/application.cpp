@@ -45,8 +45,10 @@ void Application::setApplications(std::string appSpecConfig) {
     nSpecs = (*specConfig)["types"].Size();
     cout << "Reading application configurations (" << nSpecs <<
         " types of applications)" << endl;
-    appSpecs = new ApplicationSpec*[nSpecs];
-    for(SizeType i=0; i<nSpecs; i++) {
+    int nrSyscalls = Syscall::getNSpecs();
+    appSpecs = new ApplicationSpec*[nSpecs+nrSyscalls];
+    SizeType i = 0;
+    for(i=0; i<nSpecs; i++) {
         ApplicationSpec::ApplicationType type;
         string typeString = (*specConfig)["types"][i]["type"].GetString();
         if(typeString == "normal") type = ApplicationSpec::NORMAL;
@@ -71,6 +73,14 @@ void Application::setApplications(std::string appSpecConfig) {
             }
         }
         appSpecs[i] = new ApplicationSpec(type, syscallIndex, nSyscalls);
+    }
+    for(SizeType j=0; j<nrSyscalls; j++) {
+        int appSpecIndex = i+j;
+        ApplicationSpec::ApplicationType type;
+        type = ApplicationSpec::SYSCALL_PROCESS;
+        int *syscallIndex = new int();
+        syscallIndex[0] = j;
+        appSpecs[appSpecIndex] = new ApplicationSpec(type, syscallIndex, 1);
     }
 }
 

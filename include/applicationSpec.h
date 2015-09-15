@@ -1,7 +1,8 @@
 class ApplicationSpec {
 public:
     enum ApplicationType { 
-        NORMAL 
+        NORMAL,
+        SYSCALL_PROCESS
     };
 
     ApplicationSpec(ApplicationType _type, int *_syscallIndex, 

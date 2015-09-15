@@ -17,6 +17,8 @@ public:
     unsigned int getIndex() { return index; }
     unsigned int getPrintingIndex() { return printingCoreIndex; }
     Environment* getEnv() { return env; }
+    bool isBusy() { return appRunning != NULL; }
+    void freeCore() { appRunning = NULL; }
 protected:
     Application *appRunning;
     Environment *env;

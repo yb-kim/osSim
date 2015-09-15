@@ -7,6 +7,6 @@ TypeAMicroAppFactory::TypeAMicroAppFactory() : AppFactory() {
 
 Application* TypeAMicroAppFactory::createApp() {
     TypeAMicroApplication *app = new TypeAMicroApplication(selectAppType());
-    //app->setOS(os);
+    app->setOS(os);
     return app;
 }

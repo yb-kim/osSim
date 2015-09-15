@@ -16,6 +16,9 @@ public:
 
     static unsigned int getNSpecs() { return nSpecs; }
     static ApplicationSpec* getAppSpec(int index) { return (index >= 0 ? appSpecs[index] : 0); }
+    static int getSyscallProcessIndex(int syscallIndex) { 
+        return nSpecs + syscallIndex;
+    }
     static void setApplications(std::string appSpecs);
 
     bool isFinished() { return finished; }
