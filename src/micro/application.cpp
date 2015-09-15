@@ -14,36 +14,41 @@ MicroApplication::MicroApplication(int appSpecIndex) : Application(appSpecIndex)
 }
 
 void MicroApplication::run(unsigned int unitTick) {
+    cout << "enter run() of app #" << id << endl;
+    //move to next syscall if finished
+    if(state==NORMAL && isSyscallFinished()) {
+        if(!moveToNextSyscall()) { //app finished
+            finished = true;
+            cout << "app #" << id << " finished" << endl;
+            return;
+        }
+    }
     remainingTicks = unitTick;
-    cout << "enter run()" << endl;
 
     printSyscallStatus();
 
     if(state==WAITING || state==WAITING_NS) {
         cout << "Waiting ipc result..." << endl;
-        int processed = processNormalTicks(unitTick);
-        cout << "normal tick processed: " << processed <<
-            " (" << pc.normalTicks << " ticks remaining)" << endl;
         return;
     }
 
-    //process ipc
-    doIpc();
-
-    //process normal ticks
-    int processed = processNormalTicks(unitTick);
-    cout << "normal tick processed: " << processed <<
-        " (" << pc.normalTicks << " ticks remaining)" << endl;
-
-    //move to next syscall if finished
-    if(isSyscallFinished()) {
-        if(!moveToNextSyscall()) { //app finished
-            finished = true;
-        }
+    if(pc.spec == NULL) {
+        // computation job
+        //process normal ticks
+        int processed = processNormalTicks(unitTick);
+        cout << "normal tick processed: " << processed <<
+            " (" << pc.normalTicks << " ticks remaining)" << endl;
+    } else {
+        //process ipc
+        doIpc();
     }
+
 }
 
 bool MicroApplication::isSyscallFinished() {
+    if(pc.spec == NULL) {
+        return pc.normalTicks <= 0;
+    }
     unsigned int nServices = pc.spec->getNServices();
     return(
             pc.serviceIndex >= nServices && pc.normalTicks <= 0
@@ -101,12 +106,18 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
     //send request
 }
 
-void MicroApplication::setPC(unsigned int syscallIndex) {
-    pc.spec = (MicroSyscallSpec *)Syscall::getSyscallSpec(
-            spec->getSyscallIndex()[syscallIndex]);
-    //pc.spec = (MicroSyscallSpec *)Syscall::getSyscallSpec(syscallIndex);
+void MicroApplication::setPC(int syscallIndex) {
+    int syscallNumber = spec->getSyscallIndex()[syscallIndex];
     pc.serviceIndex = 0;
-    pc.normalTicks = pc.spec->getNormalTicks();
+    if(syscallNumber >= 0) {
+        pc.spec = (MicroSyscallSpec *)Syscall::getSyscallSpec(syscallNumber);
+        //pc.spec = (MicroSyscallSpec *)Syscall::getSyscallSpec(syscallIndex);
+        pc.normalTicks = 0;
+    } else {
+        //normal computation workload
+        pc.spec = NULL;
+        pc.normalTicks = -syscallNumber;
+    }
 }
 
 void MicroApplication::sendRequest(Request *req) {
@@ -191,9 +202,14 @@ void MicroApplication::printSyscallStatus() {
     cout << "Syscalls: ";
     for(int i=0; i<spec->getNSyscalls(); i++) {
         int *syscallIndex = spec->getSyscallIndex();
-        MicroSyscallSpec *syscallSpec = (MicroSyscallSpec *)
-            Syscall::getSyscallSpec(syscallIndex[i]);
-        cout << syscallSpec->getName();
+        if(syscallIndex[i] < 0) {
+            cout << pc.normalTicks << " ticks";
+        }
+        else {
+            MicroSyscallSpec *syscallSpec = (MicroSyscallSpec *)
+                Syscall::getSyscallSpec(syscallIndex[i]);
+            cout << syscallSpec->getName();
+        }
         if(syscallPointer == i) cout << "(*)";
         cout << " -> ";
     }

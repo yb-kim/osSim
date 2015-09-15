@@ -23,7 +23,7 @@ public:
     bool snoopBus(CoherencyRequest *req);
     State getState() { return state; }
     void setState(State s) { state = s; }
-    void setPC(unsigned int syscallIndex);
+    void setPC(int syscallIndex);
     virtual void processFinish();
 
     struct PC {

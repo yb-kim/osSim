@@ -2,7 +2,7 @@
     "types": [
         {
             "type": "normal",
-            "workload": ["s1", "s0"]
+            "workload": [100, "s1", "s0"]
         }
     ]
 }

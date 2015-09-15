@@ -23,3 +23,8 @@ void TypeAMicroApplication::doIpc() {
     microOS->sendIpc(request);
     return;
 }
+
+
+bool TypeAMicroApplication::isSyscallFinished() {
+    return pc.normalTicks <= 0;
+}

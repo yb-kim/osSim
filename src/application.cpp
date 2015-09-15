@@ -69,6 +69,7 @@ void Application::setApplications(std::string appSpecConfig) {
                 syscallIndex[j] = currentSyscallIndex;
             } else {
                 currentSyscallIndex = syscalls[j].GetInt();
+                cout << "computation: " << currentSyscallIndex << " ticks" << endl;
                 syscallIndex[j] = -currentSyscallIndex;
             }
         }

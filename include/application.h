@@ -38,7 +38,7 @@ protected:
     static unsigned int nextId;
 
     //private functions
-    virtual void setPC(unsigned int syscallIndex) = 0;
+    virtual void setPC(int syscallIndex) = 0;
     bool moveToNextSyscall(); // returns false when there is no syscall remaining
     SyscallSpec* getCurrentSyscallSpec(int i=-1);
     static void readConfig(std::string appSpecConfig);

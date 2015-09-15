@@ -88,7 +88,7 @@ void MonoApplication::freeLock() {
     Syscall::freeLock(syscallIndex, this);
 }
 
-void MonoApplication::setPC(unsigned int syscallIndex) {
+void MonoApplication::setPC(int syscallIndex) {
     currentSyscallSpec = (MonoSyscallSpec *)getCurrentSyscallSpec(syscallIndex);
     currentSyscallWorkloadIndex = 0;
     currentSyscallWorkload = currentSyscallSpec->getSyscallWorkload(

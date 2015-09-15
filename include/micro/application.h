@@ -46,14 +46,14 @@ protected:
     int nsExpiration;
     //MicroOS::Service *service;
     void ipc(MicroOS::ServiceType serviceType);
-    void setPC(unsigned int syscallIndex);
+    void setPC(int syscallIndex);
     void sendRequest(Request *req);
     unsigned int processNormalTicks(unsigned int ticks);
     void printSyscallStatus();
     virtual void doIpc();
     
     int remainingTicks;
-    bool isSyscallFinished();
+    virtual bool isSyscallFinished();
     unsigned int *nsCache; //saves core index of each services
 
     int nsCoreIndex;

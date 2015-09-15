@@ -12,4 +12,5 @@ public:
 protected:
     FusedOSTypeA* fusedOS;
     virtual void doIpc();
+    bool isSyscallFinished();
 };

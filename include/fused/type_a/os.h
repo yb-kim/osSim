@@ -29,4 +29,5 @@ private:
 
     void setOsSpecificSpecs(std::string osSpecificSpecs);
     int getGlobalCoreIndex(int microCoreIndex) { return microCoreIndex + nMonoCores; }
+    void wrapUp();
 };

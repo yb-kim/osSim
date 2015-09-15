@@ -21,6 +21,8 @@ public:
 
     Environment* getEnv() { return env; }
 
+    unsigned int getNAppsFinished() { return nAppsFinished; }
+
 protected:
     Environment *env;
     AppFactory *factory;

@@ -109,3 +109,9 @@ void FusedOSTypeA::processIpc(int unitTick) {
 int FusedOSTypeA::getIpcCost(int srcCoreIndex, int destCoreIndex) {
     return 5;
 }
+
+
+void FusedOSTypeA::wrapUp() {
+    nAppsFinished = microOS->getNAppsFinished();
+    cout << "apps finished: " << nAppsFinished << endl;
+}

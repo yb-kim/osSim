@@ -16,7 +16,7 @@ Document* Syscall::specConfig;
 unsigned int Syscall::nSpecs;
 Syscall::SyscallNameIndexPair* Syscall::syscallNameIndexPairs;
 
-SyscallSpec* Syscall::getSyscallSpec(unsigned int n) {
+SyscallSpec* Syscall::getSyscallSpec(int n) {
     return syscalls[n];
 }
 
