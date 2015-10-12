@@ -9,6 +9,7 @@ using namespace rapidjson;
 using namespace std;
 
 MonoApplication::MonoApplication(unsigned int appSpecIndex) : Application(appSpecIndex) {
+    cout << "appSpecIndex: " << appSpecIndex << endl;
     setPC(syscallPointer);
     state = NORMAL;
     currentSyscallWorkloadIndex = 0;
@@ -23,8 +24,14 @@ void MonoApplication::run(unsigned int unitTick) {
     cout << "Syscalls: ";
     for(int i=0; i<spec->getNSyscalls(); i++) {
         //int *syscallIndex = spec->getSyscallIndex();
-        MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *) getCurrentSyscallSpec(i);
-        cout << syscallSpec->getName();
+        int syscallSpecNumber = spec->getSyscallIndex()[i];
+        if(syscallSpecNumber < 0) {
+            cout << -syscallSpecNumber << " ticks";
+        }
+        else {
+            MonoSyscallSpec *syscallSpec = (MonoSyscallSpec *) getCurrentSyscallSpec(i);
+            cout << syscallSpec->getName();
+        }
         if(syscallPointer == i) cout << "(*)";
         cout << " -> ";
     }
@@ -35,8 +42,10 @@ void MonoApplication::run(unsigned int unitTick) {
     }
     unsigned int remaining = unitTick;
 
+    int syscallSpecNumber = spec->getSyscallIndex()[syscallPointer];
     if(remaining > 0) {
-        if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL) {
+        if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL || 
+                syscallSpecNumber < 0) {
             remaining = processNormalTicks(remaining);
         } else {
             remaining = processLockTicks(remaining);
@@ -84,25 +93,37 @@ unsigned int MonoApplication::processLockTicks(unsigned int tick) {
 }
 
 void MonoApplication::freeLock() {
-    unsigned int syscallIndex = getCurrentSyscallSpec()->getIndex();
-    Syscall::freeLock(syscallIndex, this);
+    int syscallSpecNumber = spec->getSyscallIndex()[syscallPointer];
+    if(syscallSpecNumber >= 0) {
+        unsigned int syscallIndex = getCurrentSyscallSpec()->getIndex();
+        Syscall::freeLock(syscallIndex, this);
+    }
 }
 
 void MonoApplication::setPC(int syscallIndex) {
-    currentSyscallSpec = (MonoSyscallSpec *)getCurrentSyscallSpec(syscallIndex);
-    currentSyscallWorkloadIndex = 0;
-    currentSyscallWorkload = currentSyscallSpec->getSyscallWorkload(
-            currentSyscallWorkloadIndex);
-    cout << "setting PC: syscall " << currentSyscallSpec->getName() <<", workload#" << 
-        currentSyscallWorkloadIndex << endl;
-    if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL) {
-        pc.normalTicks = currentSyscallWorkload.tick;
+    int syscallSpecNumber = spec->getSyscallIndex()[syscallIndex];
+    cout << "syscallSpecNumber: " << syscallSpecNumber << endl;
+    if(syscallSpecNumber < 0) {
+        //computation job
+        pc.normalTicks = -syscallSpecNumber;
         pc.lockTicks = 0;
-        cout << "type: NORMAL, tick: " << pc.normalTicks << endl;
+        cout << "computation: " << pc.normalTicks << " ticks" << endl;
     } else {
-        pc.normalTicks = 0;
-        pc.lockTicks = currentSyscallWorkload.tick;
-        cout << "type: LOCK, tick: " << pc.lockTicks << endl;
+        currentSyscallSpec = (MonoSyscallSpec *)getCurrentSyscallSpec(syscallIndex);
+        currentSyscallWorkloadIndex = 0;
+        currentSyscallWorkload = currentSyscallSpec->getSyscallWorkload(
+                currentSyscallWorkloadIndex);
+        cout << "setting PC: syscall " << currentSyscallSpec->getName() <<", workload#" << 
+            currentSyscallWorkloadIndex << endl;
+        if(currentSyscallWorkload.type == MonoSyscallSpec::NORMAL) {
+            pc.normalTicks = currentSyscallWorkload.tick;
+            pc.lockTicks = 0;
+            cout << "type: NORMAL, tick: " << pc.normalTicks << endl;
+        } else {
+            pc.normalTicks = 0;
+            pc.lockTicks = currentSyscallWorkload.tick;
+            cout << "type: LOCK, tick: " << pc.lockTicks << endl;
+        }
     }
 }
 
@@ -126,6 +147,11 @@ void MonoApplication::moveToNextSyscallWorkload() {
 
 
 bool MonoApplication::isSyscallFinished() {
+    int syscallSpecNumber = spec->getSyscallIndex()[syscallPointer];
+    //if(currentSyscallSpec == NULL) {
+    if(syscallSpecNumber < 0) {
+        return isSyscallWorkloadFinished();
+    }
     unsigned int nSyscallWorkloads = currentSyscallSpec->getNSyscallWorkloads();
     return isSyscallWorkloadFinished() && 
         currentSyscallWorkloadIndex == nSyscallWorkloads-1;
@@ -165,6 +191,7 @@ bool MonoApplication::getLock(int specIndex) {
         break;
 
     case MonoCore::INVALID:
+    default:
         //send request to bus
         cout << "cache line is in INVALID state" << endl;
         CoherencyRequest *req;
@@ -178,8 +205,10 @@ bool MonoApplication::getLock(int specIndex) {
         cout << "waiting the cache block is coming..." << endl;
         return false;
 
+    /*
     default:
         break;
+    */
     }
 
     //try to get lock
@@ -228,12 +257,17 @@ bool MonoApplication::getLock(int specIndex) {
             return false;
 
         case MonoCore::INVALID:
+        defalut:
             cout << "Error: cache state must not be in INVALID state when write" << endl;
             return false;
 
+        /*
         defalut:
+            cout << "error: cacheline is in default state" << endl;
             break;
+        */
         }
+
 
     } else {
         //wait to aquire lock

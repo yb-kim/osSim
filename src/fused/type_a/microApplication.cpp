@@ -26,5 +26,5 @@ void TypeAMicroApplication::doIpc() {
 
 
 bool TypeAMicroApplication::isSyscallFinished() {
-    return pc.normalTicks <= 0;
+    return (pc.spec == NULL && state == NORMAL && pc.normalTicks <= 0) || (state == COMPLETED);
 }

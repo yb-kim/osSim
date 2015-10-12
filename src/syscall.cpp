@@ -116,7 +116,6 @@ bool Syscall::isTakingLock(unsigned int syscallNum, Application *app) {
 
 int Syscall::getSyscallIndexByName(string syscallName) {
     for(int i=0; i<Syscall::nSpecs; i++) {
-        cout << "syscallNameIndexPair: " << syscallNameIndexPairs[i].name << ", " << syscallNameIndexPairs[i].index << endl;
         if(Syscall::syscallNameIndexPairs[i].name == syscallName) 
             return syscallNameIndexPairs[i].index;
     }

@@ -22,6 +22,7 @@ public:
         NORMAL,
         WAITING_NS,
         WAITING,
+        COMPLETED,
         TERMINATED
     };
 

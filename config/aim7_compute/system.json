@@ -1,0 +1,20 @@
+{
+    "osType": "mono",
+
+    "os": {
+        "maxTick": 100000,
+        "unitTick": 30,
+        "contextSwitchTick": 1000,
+        "nApps": 64
+    },
+
+    "env": {
+        "nCores": 32,
+        "topology": "RING",
+        "baseLatency": 2
+    },
+
+    "appQueue": {
+        "policy": "ROUND_ROBIN"
+    }
+}

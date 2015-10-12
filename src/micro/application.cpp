@@ -16,13 +16,14 @@ MicroApplication::MicroApplication(int appSpecIndex) : Application(appSpecIndex)
 void MicroApplication::run(unsigned int unitTick) {
     cout << "enter run() of app #" << id << endl;
     //move to next syscall if finished
-    if(state==NORMAL && isSyscallFinished()) {
+    if(isSyscallFinished()) {
         if(!moveToNextSyscall()) { //app finished
             finished = true;
             cout << "app #" << id << " finished" << endl;
             return;
         }
     }
+
     remainingTicks = unitTick;
 
     printSyscallStatus();
@@ -42,6 +43,7 @@ void MicroApplication::run(unsigned int unitTick) {
         //process ipc
         doIpc();
     }
+    //
 
 }
 
@@ -203,7 +205,12 @@ void MicroApplication::printSyscallStatus() {
     for(int i=0; i<spec->getNSyscalls(); i++) {
         int *syscallIndex = spec->getSyscallIndex();
         if(syscallIndex[i] < 0) {
-            cout << pc.normalTicks << " ticks";
+            if(syscallPointer == i) {
+                cout << pc.normalTicks << " ticks";
+            }
+            else {
+                cout << -syscallIndex[i] << " ticks";
+            }
         }
         else {
             MicroSyscallSpec *syscallSpec = (MicroSyscallSpec *)

@@ -17,6 +17,7 @@ MonoOS::MonoOS(Config *cfg) : OS(cfg) {
     appSpecs = configFileRoot+"/apps.json";
 
     Syscall::setMonoSyscalls(syscallSpecs);
+    Application::setApplications(appSpecs);
     env = new MonoEnvironment(cfg->getEnvConfig(), this);
     makeAppFactory();
     setOsSpecificSpecs(osSpecificSpecs);

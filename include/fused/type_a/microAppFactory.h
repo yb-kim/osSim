@@ -11,5 +11,6 @@ public:
 
 private:
     MicroOSTypeA *os;
+    unsigned int selectAppType();
     //
 };

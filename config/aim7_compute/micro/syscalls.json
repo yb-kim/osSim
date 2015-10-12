@@ -1,0 +1,27 @@
+{
+    "types": [
+        {
+            "name": "getPid",
+            "services": ["PM"],
+            "normalTicks": 20
+        },
+
+        {
+            "name": "fork", 
+            "services": ["PM", "FM", "DISKIO"],
+            "normalTicks": 200
+        },
+
+        {
+            "name": "read",
+            "services": ["FM", "DISKIO"],
+            "normalTicks": 50
+        },
+
+        {
+            "name": "socket",
+            "services": ["FM", "NETIO"],
+            "normalTicks": 10
+        }
+    ]
+}

@@ -20,5 +20,5 @@ void MicroOSTypeA::sendIpc(FusedOSRequest *request) {
 void MicroOSTypeA::resumeApplication(int coreIndex) {
     Core *core = env->getCore(coreIndex);
     TypeAMicroApplication *app = (TypeAMicroApplication *)(core->getAppRunning());
-    app->setState(MicroApplication::NORMAL);
+    app->setState(MicroApplication::COMPLETED);
 }

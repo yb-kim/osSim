@@ -50,6 +50,8 @@ void Application::setApplications(std::string appSpecConfig) {
     SizeType i = 0;
     for(i=0; i<nSpecs; i++) {
         ApplicationSpec::ApplicationType type;
+        string appName = (*specConfig)["types"][i]["name"].GetString();
+        cout << "reading application: " << appName << endl;
         string typeString = (*specConfig)["types"][i]["type"].GetString();
         if(typeString == "normal") type = ApplicationSpec::NORMAL;
         else {
@@ -65,7 +67,6 @@ void Application::setApplications(std::string appSpecConfig) {
                 string syscallName = syscalls[j].GetString();
                 cout << "setApplications() meets syscall name: " << syscallName << endl;
                 currentSyscallIndex = Syscall::getSyscallIndexByName(syscallName);
-                cout << "syscall index is: " << currentSyscallIndex << endl;
                 syscallIndex[j] = currentSyscallIndex;
             } else {
                 currentSyscallIndex = syscalls[j].GetInt();
