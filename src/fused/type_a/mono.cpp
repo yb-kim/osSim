@@ -27,7 +27,7 @@ void MonoOSTypeA::checkAndDoSchedule() {
 }
 
 void MonoOSTypeA::makeAppFactory() {
-    factory = new TypeAMonoAppFactory();
+    factory = new TypeAMonoAppFactory(appWeights, nWeights);
 }
 
 void MonoOSTypeA::addAppToOS(int syscallIndex, int srcCoreIndex) {

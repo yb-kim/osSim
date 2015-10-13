@@ -4,7 +4,7 @@
 MicroOSTypeA::MicroOSTypeA(Config *cfg) : MicroOS(cfg, false) {
     string osTypeString = "type_a";
     syscallSpecs = configFileRoot+osTypeString+"/syscalls.json";
-    factory = new TypeAMicroAppFactory();
+    factory = new TypeAMicroAppFactory(appWeights, nWeights);
     TypeAMicroAppFactory *microAppFactory = (TypeAMicroAppFactory *)factory;
     microAppFactory->setOS(this);
     Syscall::setMonoSyscalls(syscallSpecs);

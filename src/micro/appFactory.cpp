@@ -6,6 +6,12 @@ MicroAppFactory::MicroAppFactory() : AppFactory() {
     //
 }
 
+MicroAppFactory::MicroAppFactory(int *appWeights, int nWeights) :
+    AppFactory(appWeights, nWeights)
+{
+    nextNsCoreIndex = 0;
+}
+
 Application* MicroAppFactory::createApp() {
     MicroApplication *app = new MicroApplication(selectAppType());
     app->setNsCoreIndex(getNsCoreIndex());

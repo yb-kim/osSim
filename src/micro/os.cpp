@@ -186,5 +186,5 @@ void MicroOS::sendRequest(Request *req) {
 }
 
 void MicroOS::makeAppFactory() {
-    factory = new MicroAppFactory();
+    factory = new MicroAppFactory(appWeights, nWeights);
 }

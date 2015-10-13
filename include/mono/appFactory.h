@@ -4,6 +4,7 @@
 class MonoAppFactory : public AppFactory {
 public:
     MonoAppFactory();
+    MonoAppFactory(int *appWeights, int nWeights);
     Application* createApp();
 
 private:

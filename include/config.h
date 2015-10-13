@@ -39,6 +39,8 @@ public:
     unsigned int getNCores() { return nCores; }
     unsigned int getContextSwitchTick() { return contextSwitchTick; }
     unsigned int getNApps() { return nApps; }
+    int getNWeights() { return nWeights; }
+    int* getAppWeights() { return weights; }
 
 
 private:
@@ -47,6 +49,8 @@ private:
     unsigned int nCores;
     unsigned int contextSwitchTick;
     unsigned int nApps;
+    int nWeights;
+    int *weights;
 };
 
 

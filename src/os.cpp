@@ -11,6 +11,8 @@ OS::OS(Config *cfg) :
     unitTick(osConfig->getUnitTick()),
     contextSwitchTick(osConfig->getContextSwitchTick()),
     nApps(osConfig->getNApps()),
+    nWeights(osConfig->getNWeights()),
+    appWeights(osConfig->getAppWeights()),
     untilContextSwitch(0),
     curTick(0),
     nAppsFinished(0)

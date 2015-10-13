@@ -5,6 +5,7 @@
 class MicroAppFactory : public AppFactory {
 public:
     MicroAppFactory();
+    MicroAppFactory(int *appWeights, int nWeights);
     Application* createApp();
     void setOS(MicroOS *_os) { os = _os; }
     void init();

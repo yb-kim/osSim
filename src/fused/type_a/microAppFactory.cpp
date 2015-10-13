@@ -5,12 +5,19 @@ TypeAMicroAppFactory::TypeAMicroAppFactory() : AppFactory() {
     return;
 }
 
+TypeAMicroAppFactory::TypeAMicroAppFactory(int *appWeights, int nWeights) :
+    AppFactory(appWeights, nWeights)
+{
+    return;
+}
+
 Application* TypeAMicroAppFactory::createApp() {
     TypeAMicroApplication *app = new TypeAMicroApplication(selectAppType());
     app->setOS(os);
     return app;
 }
 
+/*
 unsigned int TypeAMicroAppFactory::selectAppType() {
     int r = rand() % 810;
     cout << "rand: " << r << endl;
@@ -19,3 +26,4 @@ unsigned int TypeAMicroAppFactory::selectAppType() {
     if(r < 790) return 2;
     else return 3;
 }
+*/

@@ -160,5 +160,5 @@ int MonoOS::getCoherencyCost(int requestSrc, int dest) {
 
 
 void MonoOS::makeAppFactory() {
-    factory = new MonoAppFactory();
+    factory = new MonoAppFactory(appWeights, nWeights);
 }

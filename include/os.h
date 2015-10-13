@@ -41,6 +41,8 @@ protected:
     std::string syscallSpecs;
     std::string appSpecs;
     std::string osSpecificSpecs;
+    int nWeights;
+    int *appWeights;
 
     //statistics
     unsigned int nAppsFinished;

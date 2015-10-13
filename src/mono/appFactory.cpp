@@ -8,6 +8,12 @@ MonoAppFactory::MonoAppFactory() : AppFactory() {
     //
 }
 
+MonoAppFactory::MonoAppFactory(int *appWeights, int nWeights) :
+    AppFactory(appWeights, nWeights) 
+{
+        //
+}
+
 Application* MonoAppFactory::createApp() {
     return new MonoApplication(selectAppType());
 }

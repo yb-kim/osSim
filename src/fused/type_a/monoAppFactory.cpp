@@ -4,6 +4,12 @@ TypeAMonoAppFactory::TypeAMonoAppFactory() : AppFactory() {
     return;
 }
 
+TypeAMonoAppFactory::TypeAMonoAppFactory(int *appWeights, int nWeights) : 
+    AppFactory(appWeights, nWeights)
+{
+    return;
+}
+
 Application* TypeAMonoAppFactory::createApp() {
     return new TypeAMonoApplication(-1, -1);
 }

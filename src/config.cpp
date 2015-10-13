@@ -38,6 +38,11 @@ OsConfig::OsConfig(Value& params) {
     unitTick = params["unitTick"].GetInt();
     contextSwitchTick = params["contextSwitchTick"].GetInt();
     nApps = params["nApps"].GetInt();
+    nWeights = params["appWeights"].Size();
+    weights = new int[nWeights];
+    for(int i=0; i<nWeights; i++) {
+        weights[i] = params["appWeights"][i].GetInt();
+    }
 }
 
 
