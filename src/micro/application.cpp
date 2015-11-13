@@ -45,6 +45,14 @@ void MicroApplication::run(unsigned int unitTick) {
     }
     //
 
+    if(isSyscallFinished()) {
+        if(!moveToNextSyscall()) { //app finished
+            finished = true;
+            cout << "app #" << id << " finished" << endl;
+            return;
+        }
+    }
+
 }
 
 bool MicroApplication::isSyscallFinished() {

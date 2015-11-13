@@ -31,5 +31,6 @@ int Environment::getMessageCost_RING(int src, int dest) {
     unsigned int hops = src > dest ? src - dest : dest - src;
     unsigned int maxHops = nCores / 2;
     hops = hops > maxHops ? nCores - hops : hops;
-    return hops * baseLatency;
+    return hops / 100 * baseLatency;
+    return 10;
 }

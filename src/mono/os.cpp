@@ -53,7 +53,7 @@ void MonoOS::afterExecute() {
     cout << "start processing coherency requests" << endl;
     //cout << "maximum of " << nRequests << " requests can be processed" << endl;
     cout << menv->getBus()->getQueueSize() << " requests in the queue" << endl;
-    while(remainingTicks >= coherencyRequestTicksInDie) {
+    while(remainingTicks >= 0) {
         CoherencyRequest *req = menv->getBus()->deque();
         if(!req) {
             cout << "no request to process" << endl;

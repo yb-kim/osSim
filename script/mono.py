@@ -2,15 +2,15 @@ import sys
 import os
 from subprocess import call
 import re
+import datetime
 
-nCores = [2, 4, 8, 16, 32, 64, 128]
-baseLatency = [2, 5, 10, 20]
-oneHopWeight = 1
-twoHopWeight = 1
-#oneHopWeight = 2
-#twoHopWeight = 2.5
+nCores = [i for i in range(10, 110, 10)] + [i for i in range(150, 1050, 50)]
+#nCores = [i for i in range(10, 110, 10)]
+baseLatency = [2]
+oneHopWeight = 2
+twoHopWeight = 2.5
 
-configFilePath = '/home/ybkim/workspace/osSim/config/example'
+configFilePath = '/home/ybkim/workspace/osSim/config/aim7_compute'
 outFilePath = './out'
 
 data = []
@@ -44,8 +44,12 @@ with open(outFilePath+"/result.out", "w") as resultFile:
             replacement = r'\1: "mono",'
             cfg = re.sub(pat, replacement, cfg)
 
+            pat = r'("unitTick"): (.+)'
+            replacement = r'\1: 50,'
+            cfg = re.sub(pat, replacement, cfg)
+
             pat = r'("maxTick"): (.+)'
-            replacement = r'\1: 100000,'
+            replacement = r'\1: 1500000,'
             cfg = re.sub(pat, replacement, cfg)
 
             tempCfgFile.write(cfg)
@@ -67,6 +71,9 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                 appsFile.write(appsConfig)
                 appsFile.close()
                 resultFile.write("simulating with nCores = %d, baseLatency = %d\n" % (n, i))
+
+                print "start running #cores: %d, #baseLatency: %d" % (n, i)
+
                 call(["../osSim", "./config/"], stdout = outFile)
                 outFile.seek(-100, 2)
                 tail = outFile.read()
@@ -75,6 +82,7 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                 resultFile.write("processed apps / core = %f\n\n" % (float(appsProcessed)/float(n)))
 
                 data.append((n, i, appsProcessed))
+                print (n, i, appsProcessed)
             resultFile.write('\n')
 
             call(["rm", outFilePath+"/sim_logs/result_%d_cores_baseLatency_%d.txt" % (n, i)])
@@ -101,3 +109,8 @@ plot """)
 
 call(["gnuplot", "gnuplot_in"])
 call(["mv", "gnuplot_in", "data_plot.dat", outFilePath])
+
+now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+
+call(["cp", "plot.png", "/home/ybkim/dropbox/Inbox/osSim/plot_%s.png" % (now)])
+call(["cp", outFilePath + "/data_plot.dat", "/home/ybkim/dropbox/Inbox/osSim/data_%s.dat" % (now)])
