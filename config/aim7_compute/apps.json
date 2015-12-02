@@ -3,7 +3,7 @@
         {
             "name": "disk_wrt",
             "type": "normal",
-            "workload": ["write", "write", "write", "write", "write", "write", "write", "write", "write", "write"]
+            "workload": [100, 20, "write", "write", "write", "write", "write", "write", "write", "write", "write"]
         },
         {
             "name": "disk_wrt",

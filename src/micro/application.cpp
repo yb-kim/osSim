@@ -40,8 +40,22 @@ void MicroApplication::run(unsigned int unitTick) {
         cout << "normal tick processed: " << processed <<
             " (" << pc.normalTicks << " ticks remaining)" << endl;
     } else {
-        //process ipc
-        doIpc();
+        //check is the service is computation
+        int serviceType = pc.spec->getServiceType(pc.serviceIndex);
+        if(serviceType < 0) {
+            if(pc.normalTicks <= 0) {
+                pc.normalTicks = -serviceType;
+            }
+            int processed = processNormalTicks(unitTick);
+            cout << processed << " ticks processed" << endl;
+            if(pc.normalTicks <= 0) {
+                cout << "computation finished" << endl;
+                pc.serviceIndex++;
+            }
+        } else {
+            //process ipc
+            doIpc();
+        }
     }
     //
 
@@ -61,7 +75,8 @@ bool MicroApplication::isSyscallFinished() {
     }
     unsigned int nServices = pc.spec->getNServices();
     return(
-            pc.serviceIndex >= nServices && pc.normalTicks <= 0
+            pc.serviceIndex >= nServices && pc.normalTicks <= 0 &&
+            state == NORMAL
           );
 }
 
@@ -77,7 +92,11 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
     //first look NS cache
     //if no entry in cache, make ipc to NS
     cout << "Making IPC Request (";
-    cout << "NS cache will expire after " << nsExpiration << " ticks)" << endl;
+    if(nsExpiration > 0) {
+        cout << "NS cache will expire after " << nsExpiration << " ticks)" << endl;
+    } else {
+        cout << "NS cache has expired)" << endl;
+    }
     MicroServiceApplication *dest;
     list< unsigned int > *sequence = new list< unsigned int>();
     sequence->push_back(coreIndex); //sender
@@ -87,17 +106,19 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
         dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCoreIndex)->getAppRunning();
     } else {
         unsigned int nServices = pc.spec->getNServices();
-        for(int i=0; i<nServices; i++) {
-            MicroOS::ServiceType type = pc.spec->getServiceType(i);
+        for(int i=pc.serviceIndex; i<nServices; i++) {
+            int t = pc.spec->getServiceType(i);
+            if(t < 0) break;
+            MicroOS::ServiceType type = (MicroOS::ServiceType)t;
             sequence->push_back(nsCache[type]);
         }
-        MicroOS::ServiceType type = pc.spec->getServiceType(pc.serviceIndex);
+        MicroOS::ServiceType type = (MicroOS::ServiceType)(pc.spec->getServiceType(pc.serviceIndex));
         dest = (MicroServiceApplication *)os->getEnv()->getCore(nsCache[type])->getAppRunning();
     }
     sequence->push_back(coreIndex); //final reciever
 
     //make request
-    Request *req = new Request(this, sequence, os);
+    Request *req = new Request(this, dest, sequence, os);
     //req = new Request(this, dest);
 
     //print request sequence
@@ -109,7 +130,8 @@ void MicroApplication::ipc(MicroOS::ServiceType serviceType) {
         state = WAITING_NS;
     } else {
         state = WAITING;
-        pc.serviceIndex++;
+        cout << "serviceIndex is incremented by: " << sequence->size()-2 << endl;
+        pc.serviceIndex += sequence->size()-2;
     }
     return;
     //make request
@@ -234,8 +256,9 @@ void MicroApplication::printSyscallStatus() {
 
 void MicroApplication::doIpc() {
     unsigned int nServices = pc.spec->getNServices();
+    cout << "serviceIndex: " << pc.serviceIndex << endl;
     if(pc.serviceIndex <= nServices-1) {
-        ipc(pc.spec->getServiceType(pc.serviceIndex));
+        ipc((MicroOS::ServiceType)(pc.spec->getServiceType(pc.serviceIndex)));
         return;
     }
 }

@@ -4,9 +4,10 @@ using namespace std;
 
 Request::Request(
         MicroApplication *src,
+        MicroApplication *dest,
         std::list< unsigned int > *sequence,
         MicroOS *os):
-    src(src), coreSequence(sequence),
+    src(src), dest(dest), coreSequence(sequence),
     nServices(nServices), os(os)
 {
     currentService = sequence->begin();

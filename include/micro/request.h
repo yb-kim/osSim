@@ -19,6 +19,7 @@ public:
     }
 
     Request(MicroApplication *src,
+            MicroApplication *dest,
             std::list< unsigned int > *sequence,
             MicroOS *os);
 

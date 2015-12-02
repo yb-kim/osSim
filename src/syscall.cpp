@@ -72,17 +72,28 @@ void Syscall::setMicroSyscalls(string syscallSpecs) {
     SizeType nSpecs = (*specConfig)["types"].Size();
     syscalls = (SyscallSpec **)new MicroSyscallSpec*[nSpecs];
     Syscall::syscallNameIndexPairs = new SyscallNameIndexPair[nSpecs];
+
+    Syscall::nSpecs = nSpecs;
     for(SizeType i=0; i<nSpecs; i++) {
         Value& syscallConfig = (*specConfig)["types"][i];
-        unsigned int normalTicks = syscallConfig["normalTicks"].GetInt();
-        SizeType nServices = syscallConfig["services"].Size();
+        //unsigned int normalTicks = syscallConfig["normalTicks"].GetInt();
+        //SizeType nServices = syscallConfig["services"].Size();
+        SizeType nWorkloads = syscallConfig["workloads"].Size();
         string name = syscallConfig["name"].GetString();
-        MicroOS::ServiceType *services = new MicroOS::ServiceType[nServices];
-        for(SizeType j=0; j<nServices; j++) {
-            string serviceType = syscallConfig["services"][j].GetString();
-            services[j] = MicroOS::getServiceType(serviceType);
+        //MicroOS::ServiceType *services = new MicroOS::ServiceType[nWorkloads];
+        int *services = new int[nWorkloads];
+        for(SizeType j=0; j<nWorkloads; j++) {
+            Value& workload = syscallConfig["workloads"][j];
+            if(workload.IsString()) {
+                string serviceType = workload.GetString();
+                services[j] = MicroOS::getServiceType(serviceType);
+            } else {
+                int tick = workload.GetInt();
+                services[j] = -tick;
+            }
         }
-        syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices, name, i);
+        //syscalls[i] = new MicroSyscallSpec(normalTicks, services, nServices, name, i);
+        syscalls[i] = new MicroSyscallSpec(services, nWorkloads, name, i);
         Syscall::syscallNameIndexPairs[i].name = name;
         Syscall::syscallNameIndexPairs[i].index = i;
     }

@@ -1,27 +1,23 @@
 {
     "types": [
         {
-            "name": "getPid",
-            "services": ["PM"],
-            "normalTicks": 20
+            "name": "write",
+            "workloads": [20, "PM", "FM", 20, "PM", "FM"]
         },
 
         {
             "name": "fork", 
-            "services": ["PM", "FM", "DISKIO"],
-            "normalTicks": 200
+            "workloads": [200, "PM", "FM", "DISKIO"]
         },
 
         {
             "name": "read",
-            "services": ["FM", "DISKIO"],
-            "normalTicks": 50
+            "workloads": [50, "FM", "DISKIO"]
         },
 
         {
             "name": "socket",
-            "services": ["FM", "NETIO"],
-            "normalTicks": 10
+            "workloads": [10, "FM", "NETIO"]
         }
     ]
 }
