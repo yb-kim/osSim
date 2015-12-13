@@ -31,8 +31,8 @@ protected:
     OS *os;
     Topology topology;
     unsigned int baseLatency;
-    unsigned int ipc_remote;
-    unsigned int ipc_die;
+    int ipc_remote;
+    int ipc_die;
 
     int (Environment::*costFunction) (int src, int dest);
     int getMessageCost_RING(int src, int dest);

@@ -61,6 +61,8 @@ public:
     std::string getTopology() { return topology; }
     unsigned int getBaseLatency() { return baseLatency; }
     unsigned int getStartCoreIndex() { return startCoreIndex; }
+    unsigned int getIpcDie() { return ipc_die; }
+    unsigned int getIpcRemote() { return ipc_remote; }
 
     void setStartCoreIndex(unsigned int i) { startCoreIndex = i; }
 

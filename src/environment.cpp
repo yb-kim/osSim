@@ -6,7 +6,9 @@ using namespace std;
 
 Environment::Environment(EnvConfig *cfg):
     nCores(cfg->getNCores()),
-    baseLatency(cfg->getBaseLatency())
+    baseLatency(cfg->getBaseLatency()),
+    ipc_remote(cfg->getIpcRemote()),
+    ipc_die(cfg->getIpcDie())
 {
     string topologyName = cfg->getTopology();
     if(topologyName == "RING") topology = RING;

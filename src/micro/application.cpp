@@ -205,10 +205,12 @@ void MicroServiceApplication::run(unsigned int unitTick) {
 }
 
 int MicroServiceApplication::getServiceTicks() {
+    cout << "getServiceTicks() " << endl;
     int nSameServices = service->runningCoreIndex.size();
     int baseTicks = service->ticks;
     if (nSameServices <= 1) return baseTicks;
-    int finalTicks = nSameServices * baseTicks;
+    int finalTicks = baseTicks + (double)baseTicks * 0.02 * nSameServices;
+    cout << "finalTicks: " << finalTicks << endl;
     return finalTicks;
 }
 
