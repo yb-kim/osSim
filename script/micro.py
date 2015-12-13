@@ -1,14 +1,15 @@
 import sys
+import datetime
 import os
 from subprocess import call
 import re
 
-nCores = [8, 16, 32]
-nSets = [1, 2]
-ipcCosts = [(2, 9, 11), (8, 36, 44)]
+nCores = [i for i in range(10, 110, 10)] + [i for i in range(150, 1050, 50)]
+nSets = [1, 2, 4, 8, 16, 32, 64, 128]
+ipcCosts = [(3, 17, 17)]
 nServices = 4   #except NS
 
-configFilePath = '/home/ybkim/workspace/osSim/config/example'
+configFilePath = '/home/ybkim/workspace/osSim/config/aim7_shared'
 outFilePath = './out'
 
 data = []
@@ -43,17 +44,17 @@ with open(outFilePath+"/result.out", "w") as resultFile:
             cfg = re.sub(pat, replacement, cfg)
 
             pat = r'("unitTick"): (.+)'
-            replacement = r'\1: 5,'
+            replacement = r'\1: 10,'
             cfg = re.sub(pat, replacement, cfg)
 
             pat = r'("maxTick"): (.+)'
-            replacement = r'\1: 50000,'
+            replacement = r'\1: 1000000,'
             cfg = re.sub(pat, replacement, cfg)
 
             tempCfgFile.write(cfg)
 
         for i in nSets:
-            if i*nServices+1 >= n:
+            if i*(nServices+1) >= n:
                 data.append((n, i, 0, 0, 0, 0))
                 continue;
 
@@ -79,6 +80,7 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                     appsFile.close()
 
                     resultFile.write("simulating with nCores = %d, nSet = %f\n" % (n, i))
+                    print "start running #cores: %d, nSet: %d, ipcCost: (%d, %d)" % (n, i, ipcCost[0], ipcCost[1])
                     call(["../osSim", "./config/"], stdout = outFile)
                     outFile.seek(-100, 2)
                     tail = outFile.read()
@@ -86,7 +88,8 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                     resultFile.write("total processed apps = %d\n" % appsProcessed)
                     resultFile.write("processed apps / core = %f\n\n" % (float(appsProcessed)/float(n)))
 
-                    data.append((n, i, ipcCost[0], ipcCost[1], ipcCost[2], appsProcessed))
+                    data.append((n, i, appsProcessed))
+                    print (n, i, appsProcessed)
 
                 call(["rm", outFilePath+"/sim_logs/result_%d_cores_nSet_%d_ipcCost_%d.txt" % (n, i, ipcCost[0])])
         resultFile.write('\n')
@@ -98,20 +101,12 @@ with open("data_plot.dat", "w") as plotData:
         plotData.write("%d %d %d %d %d %d\n" % (line[0], line[1], line[2], line[3], line[4], line[5]))
 """
 
-result = []
-for nCore in nCores:
-    for ipcCost in ipcCosts:
-        values = [item[5] for item in data if item[0]==nCore and item[2]==ipcCost[0]]
-        processed = max(values)
-        result.append((nCore, ipcCost[0], processed))
-
 with open("data_plot.dat", "w") as plotData:
-    plotData.write("%s %s %s\n" % ("#nCores", "ipcCost_inDie", "processed"))
-    for line in result:
+    plotData.write("%s %s\n" % ("nSet", "proccessed"))
+    for line in data:
         plotData.write("%d %d %d\n" % (line[0], line[1], line[2]))
 
 #draw plot
-inDieCosts = [cost[0] for cost in ipcCosts]
 with open("gnuplot_in", "w") as commands:
     commands.write("""
 set xlabel "nCores"
@@ -120,11 +115,16 @@ set term png
 set output "plot.png"
 lastx = NaN; lasty = NaN
 plot """)
-    for i in ipcCosts:
-        commands.write('"data_plot.dat" u ($2==%d?($1, lastx=$1):lastx):($2==%d?($3, lasty=$3):lasty) title "ipcCost=%d:%d:%d" with linespoints' % (i[0], i[0], i[0], i[1], i[2]))
-        if i[0] != inDieCosts[-1]:
+    for i in nSets:
+        commands.write('"data_plot.dat" u ($2==%d?($1, lastx=$1):lastx):($2==%d?($3, lasty=$3):lasty) title "nSet=%d" with linespoints' % (i, i, i))
+        if i != nSets[-1]:
             commands.write(',lastx=NaN, lasty=NaN\\')
         commands.write('\n')
 
 call(["gnuplot", "gnuplot_in"])
 call(["mv", "gnuplot_in", "data_plot.dat", outFilePath])
+
+now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+
+call(["cp", "plot.png", "/home/ybkim/dropbox/Inbox/osSim/plot_%s.png" % (now)])
+call(["cp", outFilePath + "/data_plot.dat", "/home/ybkim/dropbox/Inbox/osSim/data_%s.dat" % (now)])

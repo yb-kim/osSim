@@ -1,0 +1,50 @@
+{
+    "types": [
+        {
+            "name": "compute",
+            "type": "normal",
+            "workload": [17966]
+        },
+        {
+            "name": "string_rtns_1",
+            "type": "normal",
+            "workload": [1734, "stat", 1734]
+        },
+        {
+            "name": "brk_test",
+            "type": "normal",
+            "workload": [64, "brk", 64, "brk", 64, "brk", 64, "brk", 64, "brk", 64, "brk", 64, "brk", 64, "brk", 64, "brk", 64, "brk", 64]
+        },
+        {
+            "name": "page_test",
+            "type": "normal",
+            "workload": [217, "brk", 217]
+        },
+        {
+            "name": "signal_test",
+            "type": "normal",
+            "workload": [24, "signal", 24, "signal", 24, "signal", 24]
+        },
+        {
+            "name": "creat-clo",
+            "type": "normal",
+            "workload": [126, "creat", 126, "close", 126]
+        },
+        {
+            "name": "fork_test",
+            "type": "normal",
+            "workload": [34, "wait4", 34, "clone", 34]
+        },
+        {
+            "name": "link_test",
+            "type": "normal",
+            "workload": [11, "link", 11]
+        },
+        {
+            "name": "read_write",
+            "type": "normal",
+            "workload": [8, "read", 8, "write", 8]
+        }
+    ],
+    "weights": [430, 30, 10, 10, 10, 10, 10, 10, 50]
+}

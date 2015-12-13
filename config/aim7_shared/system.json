@@ -1,0 +1,23 @@
+{
+    "osType": "micro",
+
+    "os": {
+        "maxTick": 100000,
+        "unitTick": 10,
+        "contextSwitchTick": 300000,
+        "appWeights": [430, 30, 10, 10, 10, 10, 10, 10, 50],
+        "nApps": 2000
+    },
+
+    "env": {
+        "nCores": 1000,
+        "topology": "AIM7",
+        "baseLatency": 2,
+        "ipc_die": 3,
+        "ipc_remote": 17
+    },
+
+    "appQueue": {
+        "policy": "ROUND_ROBIN"
+    }
+}

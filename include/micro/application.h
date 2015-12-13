@@ -73,6 +73,7 @@ public:
 protected:
     MicroOS::Service* service;
     queue<Request *, list<Request *> > requestQueue;
+    int getServiceTicks();
 
 };
 

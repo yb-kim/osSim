@@ -17,8 +17,9 @@ public:
         NS, //name service
         PM,
         FM,
-        DISKIO,
+        //DISKIO,
         NETIO,
+        MM,
         SERVICES_END //mark end of enumeration
     };
 
@@ -43,8 +44,9 @@ public:
         if(serviceString == "NS") return NS;
         else if(serviceString == "FM") return FM;
         else if(serviceString == "PM") return PM;
-        else if(serviceString == "DISKIO") return DISKIO;
+        //else if(serviceString == "DISKIO") return DISKIO;
         else if(serviceString == "NETIO") return NETIO;
+        else if(serviceString == "MM") return MM;
         else //default
             return NS;
     }
@@ -57,10 +59,12 @@ public:
             return "FM";
         case PM:
             return "PM";
-        case DISKIO:
-            return "DISKIO";
+        //case DISKIO:
+            //return "DISKIO";
         case NETIO:
             return "NETIO";
+        case MM:
+            return "MM";
         default:
             return "UNKNOWN";
         }

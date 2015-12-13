@@ -185,7 +185,7 @@ void MicroServiceApplication::run(unsigned int unitTick) {
         //print process information
         req->printCoreSequence();
         if(remainingTicks <= 0) {
-            remainingTicks = service->ticks;
+            remainingTicks = getServiceTicks();
         }
 
         int processed = remainingTicks > unitTick ? unitTick : remainingTicks;
@@ -202,6 +202,14 @@ void MicroServiceApplication::run(unsigned int unitTick) {
     } while(!requestQueue.empty() && remainingTicks > 0 && unitTick > 0);
 
     return;
+}
+
+int MicroServiceApplication::getServiceTicks() {
+    int nSameServices = service->runningCoreIndex.size();
+    int baseTicks = service->ticks;
+    if (nSameServices <= 1) return baseTicks;
+    int finalTicks = nSameServices * baseTicks;
+    return finalTicks;
 }
 
 NSServiceApplication::NSServiceApplication(MicroOS *os) : MicroServiceApplication() {

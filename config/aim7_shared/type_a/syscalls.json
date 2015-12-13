@@ -1,0 +1,30 @@
+{
+    "types": [
+    {
+        "name": "write",
+        "workload": [
+        {
+            "type": "normal",
+            "tick": 140
+        },
+        {
+            "type": "lock",
+            "tick": 40
+        }
+        ]
+    },
+    {
+        "name": "read",
+        "workload": [
+        {
+            "type": "normal",
+            "tick": 7
+        },
+        {
+            "type": "lock",
+            "tick": 13
+        }
+        ]
+    }
+    ]
+}

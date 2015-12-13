@@ -1,0 +1,44 @@
+{
+    "types": [
+        {
+            "name": "stat",
+            "workloads": ["FM"]
+        },
+        {
+            "name": "brk", 
+            "workloads": ["MM"]
+        },
+        {
+            "name": "signal",
+            "workloads": ["PM"]
+        },
+        {
+            "name": "creat",
+            "workloads": ["FM", "NETIO"]
+        },
+        {
+            "name": "close",
+            "workloads": ["FM"]
+        },
+        {
+            "name": "wait4",
+            "workloads": ["PM"]
+        },
+        {
+            "name": "clone",
+            "workloads": ["PM"]
+        },
+        {
+            "name": "link",
+            "workloads": ["FM"]
+        },
+        {
+            "name": "read",
+            "workloads": ["FM"]
+        },
+        {
+            "name": "write",
+            "workloads": ["FM", "NETIO"]
+        }
+    ]
+}

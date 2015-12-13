@@ -4,31 +4,29 @@
             "name": "NS",
             "ticks": 10
         },
-
         {
             "name": "PM",
-            "ticks": 40
+            "ticks": 1010
         },
-
         {
             "name": "FM",
-            "ticks": 40
+            "ticks": 133
         },
         {
-            "name": "DISKIO",
-            "ticks": 40
+            "name": "MM",
+            "ticks": 895
         },
         {
             "name": "NETIO",
-            "ticks": 40
+            "ticks": 794
         }
     ],
 
-    "nSet": 2,
+    "nSet": 5,
     
-    "nsCacheExpiration": 10000,
+    "nsCacheExpiration": 1000000,
 
-    "ipcCost_die": 2,
-    "ipcCost_hop": 9,
-    "ipcCost_2hops": 11
+    "ipcCost_die": 3,
+    "ipcCost_hop": 17,
+    "ipcCost_2hops": 17
 }

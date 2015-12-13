@@ -50,6 +50,8 @@ EnvConfig::EnvConfig(Value& params) {
     nCores = params["nCores"].GetInt();
     topology = params["topology"].GetString();
     baseLatency = params["baseLatency"].GetInt();
+    ipc_die = params["ipc_die"].GetInt();
+    ipc_remote = params["ipc_remote"].GetInt();
     startCoreIndex = 0;
 }
 

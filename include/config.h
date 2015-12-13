@@ -71,6 +71,8 @@ private:
     unsigned int baseLatency;
     std::string topology;
     unsigned int startCoreIndex;
+    unsigned int ipc_die;
+    unsigned int ipc_remote;
 };
 
 

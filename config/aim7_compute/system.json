@@ -6,11 +6,11 @@
         "unitTick": 10,
         "contextSwitchTick": 300000,
         "appWeights": [750, 10, 30, 20],
-        "nApps": 20
+        "nApps": 40
     },
 
     "env": {
-        "nCores": 10,
+        "nCores": 20,
         "topology": "RING",
         "baseLatency": 2
     },
