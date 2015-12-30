@@ -209,7 +209,8 @@ int MicroServiceApplication::getServiceTicks() {
     int nSameServices = service->runningCoreIndex.size();
     int baseTicks = service->ticks;
     if (nSameServices <= 1) return baseTicks;
-    int finalTicks = baseTicks + (double)baseTicks * 0.02 * nSameServices;
+    double serviceCost = MicroOS::serviceCost;
+    int finalTicks = baseTicks + (double)baseTicks * serviceCost * nSameServices;
     cout << "finalTicks: " << finalTicks << endl;
     return finalTicks;
 }

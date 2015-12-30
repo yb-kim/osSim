@@ -4,7 +4,7 @@ import os
 from subprocess import call
 import re
 
-nCores = [i for i in range(10, 110, 10)] + [i for i in range(150, 550, 50)]
+nCores = [i for i in range(10, 110, 10)] + [i for i in range(150, 1050, 50)]
 nSets = [1, 2, 4, 8, 16, 32, 64, 128]
 ipcCosts = [(3, 17, 17)]
 nServices = 4   #except NS

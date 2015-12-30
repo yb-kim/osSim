@@ -26,6 +26,8 @@
     
     "nsCacheExpiration": 1000000,
 
+    "serviceCost": 0.02,
+
     "ipcCost_die": 3,
     "ipcCost_hop": 17,
     "ipcCost_2hops": 17

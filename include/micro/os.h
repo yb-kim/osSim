@@ -39,6 +39,7 @@ public:
     static Service **services;
     static int nServices;
     static int nSet;
+    static double serviceCost;
 
     static ServiceType getServiceType(std::string serviceString) {
         if(serviceString == "NS") return NS;

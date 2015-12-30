@@ -15,6 +15,7 @@ using namespace std;
 MicroOS::Service** MicroOS::services;
 int MicroOS::nSet;
 int MicroOS::nServices;
+double MicroOS::serviceCost;
 
 
 MicroOS::MicroOS(Config *cfg, bool initialize) : OS(cfg) {
@@ -79,6 +80,8 @@ void MicroOS::setOsSpecificSpecs(std::string osSpecificSpecs) {
     specs.Parse(jsonConfig.c_str());
     Document specConfig;
     specConfig.Parse(jsonConfig.c_str());
+
+    serviceCost = specConfig["serviceCost"].GetDouble();
 
     nSet = specConfig["nSet"].GetInt();
     nServices = specConfig["services"].Size();
