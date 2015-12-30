@@ -34,5 +34,5 @@ temp
 script/*
 
 #except
-!script/micro.py
+!script/micro.*.py
 !script/mono.py
