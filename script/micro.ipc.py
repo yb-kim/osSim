@@ -78,7 +78,7 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                     appsConfig = re.sub(pattern, '"ipcCost_2hops": '+str(ipcCost[2]), appsConfig)
                     """
                     pattern = r'("ipc_die"): (\d*)'
-                    appsConfig = re.sub(pattern, '"ipc_die": '+str(ipcCost[1]), appsConfig)
+                    appsConfig = re.sub(pattern, '"ipc_die": '+str(ipcCost[0]), appsConfig)
 
                     pattern = r'("ipc_remote"): (\d*)'
                     appsConfig = re.sub(pattern, '"ipc_remote": '+str(ipcCost[1]), appsConfig)

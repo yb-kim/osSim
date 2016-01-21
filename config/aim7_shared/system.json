@@ -2,15 +2,15 @@
     "osType": "micro",
 
     "os": {
-        "maxTick": 10000,
+        "maxTick": 100000,
         "unitTick": 10,
         "contextSwitchTick": 300000,
         "appWeights": [430, 30, 10, 10, 10, 10, 10, 10, 50],
-        "nApps": 200
+        "nApps": 60
     },
 
     "env": {
-        "nCores": 100,
+        "nCores": 30,
         "topology": "AIM7",
         "baseLatency": 2,
         "ipc_die": 3,
