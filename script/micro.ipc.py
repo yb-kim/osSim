@@ -77,14 +77,22 @@ with open(outFilePath+"/result.out", "w") as resultFile:
                     pattern = r'("ipcCost_2hops"): (\d*)'
                     appsConfig = re.sub(pattern, '"ipcCost_2hops": '+str(ipcCost[2]), appsConfig)
                     """
-                    pattern = r'("ipc_die"): (\d*)'
-                    appsConfig = re.sub(pattern, '"ipc_die": '+str(ipcCost[0]), appsConfig)
-
-                    pattern = r'("ipc_remote"): (\d*)'
-                    appsConfig = re.sub(pattern, '"ipc_remote": '+str(ipcCost[1]), appsConfig)
 
                     appsFile.write(appsConfig)
                     appsFile.close()
+
+                    cfg = open("./config/system.json").read()
+                    tempCfgFile = open("./config/system.json", "w")
+
+                    pattern = r'("ipc_die"): (\d*)'
+                    cfg = re.sub(pattern, '"ipc_die": '+str(ipcCost[0]), cfg)
+                    #appsConfig = re.sub(pattern, '"ipc_die": '+str(ipcCost[0]), appsConfig)
+
+                    pattern = r'("ipc_remote"): (\d*)'
+                    cfg = re.sub(pattern, '"ipc_remote": '+str(ipcCost[1]), cfg)
+                    #appsConfig = re.sub(pattern, '"ipc_remote": '+str(ipcCost[1]), appsConfig)
+                    tempCfgFile.write(cfg)
+                    tempCfgFile.close()
 
                     resultFile.write("simulating with nCores = %d, nSet = %f\n" % (n, i))
                     print "start running #cores: %d, nSet: %d, ipcCost: (%d, %d)" % (n, i, ipcCost[0], ipcCost[1])
